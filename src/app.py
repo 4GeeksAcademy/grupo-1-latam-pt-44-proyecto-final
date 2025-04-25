@@ -6,10 +6,12 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import User, db
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask import Flask, request, jsonify
+from flask_bcrypt import Bcrypt
 
 # from models import Person
 
@@ -17,6 +19,7 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -40,6 +43,7 @@ setup_commands(app)
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
 
+
 # Handle/serialize errors like a JSON object
 
 
@@ -56,6 +60,7 @@ def sitemap():
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
 
+
 # any other endpoint will try to serve it like a static file
 @app.route('/<path:path>', methods=['GET'])
 def serve_any_other_file(path):
@@ -64,6 +69,61 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    nombre = data.get('nombre')
+    apellido = data.get('apellido')
+    email = data.get('email')
+    password = data.get('password')
+
+    # Valida datos
+    errors = validate_registration_data(
+        username, nombre, apellido, email, password)
+    if errors:
+        return jsonify({'errors': errors}), 400
+
+    # Verifica que email y usuario son unicos
+    if User.query.filter_by(username=username).first():
+        return jsonify({'error': 'El nombre de usuario ya existe'}), 400
+    if User.query.filter_by(email=email).first():
+        return jsonify({'error': 'El correo electrónico ya existe'}), 400
+
+    # Hashear password
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    # Crea nuevo usuario
+    try:
+        new_user = User(username=username, nombre=nombre,
+                        apellido=apellido, email=email, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'Usuario registrado exitosamente'}), 201
+    except Exception as e:
+        print(f"Error al registrar usuario: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Error interno del servidor'}), 500
+
+
+def validate_registration_data(username, nombre, apellido, email, password):
+    errors = {}
+    if not username:
+        errors['username'] = 'El nombre de usuario es requerido'
+    if not nombre:
+        errors['nombre'] = 'El nombre es requerido'
+    if not apellido:
+        errors['apellido'] = 'El apellido es requerido'
+    if not email:
+        errors['email'] = 'El correo electrónico es requerido'
+    elif '@' not in email:
+        errors['email'] = 'El correo electrónico no es válido'
+    if not password:
+        errors['password'] = 'La contraseña es requerida'
+    elif len(password) < 6:
+        errors['password'] = 'La contraseña debe tener al menos 6 caracteres'
+    return errors
 
 
 # this only runs if `$ python src/main.py` is executed
