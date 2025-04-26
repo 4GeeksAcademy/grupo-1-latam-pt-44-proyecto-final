@@ -6,10 +6,13 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+# Leo: Importar las siguientes librerias
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt, get_jwt_identity
+from flask_cors import CORS
 
 # from models import Person
 
@@ -17,6 +20,9 @@ ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
+app.config["JWT_SECRET_KEY"] = "nuestra_clave_secreta"
+jwt = JWTManager(app)  # Inicializar jwt para que funcione dentro del BackEnd
+CORS(app)
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -66,6 +72,46 @@ def serve_any_other_file(path):
     return response
 
 #registro y login y en routes: todos los demásendpoints
+# Leo: Endpoint "/Login": Recibe usuario, valida, genera y retorna el token
+@app.route('/login', methods=['POST'])
+def get_logintoken():
+    try:
+        # silent=True : Devuelve None cuando esta mal formateado el objeto del body recibido del front}, pero no se cae toda la funcion sino que continua
+        dataFront = request.get_json(silent=True)
+        print("data del Front- body ", dataFront)  # imprimir en terminal
+
+        # Buscar usuario en BD, por su correo electronico (usuario tiene id=1)
+        user = db.session.execute(db.select(User).filter_by(email=dataFront["correo"])).scalar_one_or_none()
+        print("Usuario objero de BD ", user.password)# Nota: Se obtiene el campo de BD a pesar de que en el Modelo de BD no se expone como serializado
+
+        # Validar que exista usuario en BD y su contraseña
+        if not user or user.password != dataFront["contrasena"]:
+            return jsonify({"ok": False, "msg": "Usuario no existe o su contraseña es incorrecta"}), 401
+
+        # Opcional: Agrego Claims como información
+        claims = {
+            "role": "admin",
+            "otra_informacion": {"info": "info...", "data": "data info"}
+        }
+
+        # Si todo lo demas es exitoso.... Entonces creamos el token
+        access_token = create_access_token(identity=str(user.id), additional_claims=claims)
+
+        # Retornamos una respuesta exitosa, junto con el token creado
+        return jsonify({
+            "ok": True,
+            "access_token": access_token,
+            "msg": "Loguin existoso!"
+        }), 200
+
+    except Exception as e:
+        print("Error:", str(e))
+        db.session.rollback()
+        return jsonify({"ok": False, "msg": str(e)}), 500
+
+
+
+
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
