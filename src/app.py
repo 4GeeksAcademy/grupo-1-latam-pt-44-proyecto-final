@@ -81,11 +81,11 @@ def get_logintoken():
         print("data del Front- body ", dataFront)  # imprimir en terminal
 
         # Buscar usuario en BD, por su correo electronico (usuario tiene id=1)
-        user = db.session.execute(db.select(User).filter_by(email=dataFront["correo"])).scalar_one_or_none()
+        user = db.session.execute(db.select(User).filter_by(email=dataFront["email"])).scalar_one_or_none()
         print("Usuario objero de BD ", user.password)# Nota: Se obtiene el campo de BD a pesar de que en el Modelo de BD no se expone como serializado
 
         # Validar que exista usuario en BD y su contraseña
-        if not user or user.password != dataFront["contrasena"]:
+        if not user or user.password != dataFront["password"]:
             return jsonify({"ok": False, "msg": "Usuario no existe o su contraseña es incorrecta"}), 401
 
         # Opcional: Agrego Claims como información

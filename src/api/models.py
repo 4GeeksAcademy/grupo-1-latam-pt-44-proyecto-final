@@ -36,7 +36,6 @@ class Categoria(db.Model):
     descripcion: Mapped[str] = mapped_column(String(255), nullable=True)
 
     historias: Mapped[list["Historia"]] = relationship(back_populates="categoria", cascade="all, delete-orphan")
-    favoritos: Mapped[list["Favorito"]] = relationship(back_populates="categoria", cascade="all, delete-orphan")
 
     def serialize(self):
         return {
