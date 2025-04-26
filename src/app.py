@@ -100,7 +100,7 @@ def register():
                         apellido=apellido, email=email, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({'message': 'Usuario registrado exitosamente'}), 201
+        return jsonify({'message': 'Usuario registrado exitosamente.'}), 201
     except Exception as e:
         print(f"Error al registrar usuario: {e}")
         db.session.rollback()
