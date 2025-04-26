@@ -18,7 +18,6 @@ from flask_cors import CORS
 
 
 # from models import Person
-
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
@@ -52,8 +51,6 @@ app.register_blueprint(api, url_prefix='/api')
 
 
 # Handle/serialize errors like a JSON object
-
-
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
@@ -67,8 +64,9 @@ def sitemap():
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
 
-
 # any other endpoint will try to serve it like a static file
+
+
 @app.route('/<path:path>', methods=['GET'])
 def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
@@ -77,8 +75,10 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0  # avoid cache memory
     return response
 
-#registro y login y en routes: todos los demásendpoints
+# registro y login y en routes: todos los demásendpoints
 # Leo: Endpoint "/Login": Recibe usuario, valida, genera y retorna el token
+
+
 @app.route('/login', methods=['POST'])
 def get_logintoken():
     try:
@@ -87,11 +87,16 @@ def get_logintoken():
         print("data del Front- body ", dataFront)  # imprimir en terminal
 
         # Buscar usuario en BD, por su correo electronico (usuario tiene id=1)
-        user = db.session.execute(db.select(User).filter_by(email=dataFront["email"])).scalar_one_or_none()
-        print("Usuario objero de BD ", user.password)# Nota: Se obtiene el campo de BD a pesar de que en el Modelo de BD no se expone como serializado
+        user = db.session.execute(db.select(User).filter_by(
+            email=dataFront["email"])).scalar_one_or_none()
+        # Nota: Se obtiene el campo de BD a pesar de que en el Modelo de BD no se expone como serializado
+        print("Usuario objero de BD ", user.password)
 
         # Validar que exista usuario en BD y su contraseña
-        if not user or user.password != dataFront["password"]:
+        if not user:
+            return jsonify({"ok": False, "msg": "Usuario no existe o sus credenciales son incorrectas"}), 401
+        
+        if not bcrypt.check_password_hash(user.password, dataFront.get("password")):
             return jsonify({"ok": False, "msg": "Usuario no existe o su contraseña es incorrecta"}), 401
 
         # Opcional: Agrego Claims como información
@@ -101,7 +106,8 @@ def get_logintoken():
         }
 
         # Si todo lo demas es exitoso.... Entonces creamos el token
-        access_token = create_access_token(identity=str(user.id), additional_claims=claims)
+        access_token = create_access_token(
+            identity=str(user.id), additional_claims=claims)
 
         # Retornamos una respuesta exitosa, junto con el token creado
         return jsonify({
@@ -116,8 +122,6 @@ def get_logintoken():
         return jsonify({"ok": False, "msg": str(e)}), 500
 
 
-
-
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -126,7 +130,7 @@ def register():
     apellido = data.get('apellido')
     email = data.get('email')
     password = data.get('password')
-    is_active= data.get('is_active')
+    is_active = data.get('is_active')
 
     # Valida datos
     errors = validate_registration_data(
@@ -134,7 +138,7 @@ def register():
     if errors:
         return jsonify({'errors': errors}), 400
 
-    #Verifica que email y usuario son unicos
+    # Verifica que email y usuario son unicos
     if User.query.filter_by(username=username).first():
         return jsonify({'error': 'El nombre de usuario ya existe'}), 400
     if User.query.filter_by(email=email).first():
@@ -177,6 +181,47 @@ def validate_registration_data(username, nombre, apellido, email, password, is_a
 
     return errors
 
+# Actualizar Usuario:
+# Paso1: Endpoint "/usuario": Retornar usuario con sus campos según el usuario
+@app.route("/usuario", methods=["GET"])
+@jwt_required()
+def get_private():
+    user_id = get_jwt_identity()
+    user = db.session.get(User, user_id)
+    return jsonify(user.serialize()), 200
+
+# Paso2: Endpoint "/usuario": Actualizar usuario
+@app.route("/usuario", methods=["PUT"])
+@jwt_required()
+def update_profile():
+    user_id = get_jwt_identity()
+    user = db.session.get(User, user_id)
+
+    dataFront = request.get_json(silent=True)
+
+    user.email = dataFront.get("email", user.email)
+    user.is_active = dataFront.get("activo", user.is_active)
+    user.username = dataFront.get("username", user.username)
+    user.nombre = dataFront.get("nombre", user.nombre)
+    user.apellido = dataFront.get("apellido", user.apellido)
+     # Hashear password
+    hashed_password = bcrypt.generate_password_hash(dataFront.get("password")).decode('utf-8')
+    user.password = dataFront.get(hashed_password, user.password)
+
+    db.session.commit()
+    return jsonify({"message": "Perfil actualizado"}), 200
+
+
+# Eliminar Usuario:
+@app.route("/usuario", methods=["DELETE"])
+@jwt_required()
+def delete_profile():
+    user_id = get_jwt_identity()
+    user = db.session.get(User, user_id)
+
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({"message": "Cuenta eliminada"}), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
