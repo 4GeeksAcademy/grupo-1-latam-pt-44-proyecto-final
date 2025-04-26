@@ -16,6 +16,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt, get_jwt_identity
 from flask_cors import CORS
 
+
 # from models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -125,14 +126,15 @@ def register():
     apellido = data.get('apellido')
     email = data.get('email')
     password = data.get('password')
+    is_active= data.get('is_active')
 
     # Valida datos
     errors = validate_registration_data(
-        username, nombre, apellido, email, password)
+        username, nombre, apellido, email, password, is_active)
     if errors:
         return jsonify({'errors': errors}), 400
 
-    # Verifica que email y usuario son unicos
+    #Verifica que email y usuario son unicos
     if User.query.filter_by(username=username).first():
         return jsonify({'error': 'El nombre de usuario ya existe'}), 400
     if User.query.filter_by(email=email).first():
@@ -144,7 +146,7 @@ def register():
     # Crea nuevo usuario
     try:
         new_user = User(username=username, nombre=nombre,
-                        apellido=apellido, email=email, password=hashed_password)
+                        apellido=apellido, email=email, password=hashed_password, is_active=is_active)
         db.session.add(new_user)
         db.session.commit()
         return jsonify({'message': 'Usuario registrado exitosamente.'}), 201
@@ -154,7 +156,7 @@ def register():
         return jsonify({'error': 'Error interno del servidor'}), 500
 
 
-def validate_registration_data(username, nombre, apellido, email, password):
+def validate_registration_data(username, nombre, apellido, email, password, is_active):
     errors = {}
     if not username:
         errors['username'] = 'El nombre de usuario es requerido'
@@ -170,6 +172,9 @@ def validate_registration_data(username, nombre, apellido, email, password):
         errors['password'] = 'La contraseña es requerida'
     elif len(password) < 6:
         errors['password'] = 'La contraseña debe tener al menos 6 caracteres'
+    if not is_active:
+        errors['is_active'] = 'El parametro is_active es requerido'
+
     return errors
 
 
