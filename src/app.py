@@ -10,6 +10,8 @@ from api.models import db, User
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask import Flask, request, jsonify
+from flask_bcrypt import Bcrypt
 # Leo: Importar las siguientes librerias
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt, get_jwt_identity
 from flask_cors import CORS
@@ -23,6 +25,7 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "nuestra_clave_secreta"
 jwt = JWTManager(app)  # Inicializar jwt para que funcione dentro del BackEnd
 CORS(app)
+bcrypt = Bcrypt(app)
 app.url_map.strict_slashes = False
 
 # database condiguration
@@ -46,6 +49,7 @@ setup_commands(app)
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
 
+
 # Handle/serialize errors like a JSON object
 
 
@@ -61,6 +65,7 @@ def sitemap():
     if ENV == "development":
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
+
 
 # any other endpoint will try to serve it like a static file
 @app.route('/<path:path>', methods=['GET'])
@@ -111,6 +116,61 @@ def get_logintoken():
 
 
 
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    nombre = data.get('nombre')
+    apellido = data.get('apellido')
+    email = data.get('email')
+    password = data.get('password')
+
+    # Valida datos
+    errors = validate_registration_data(
+        username, nombre, apellido, email, password)
+    if errors:
+        return jsonify({'errors': errors}), 400
+
+    # Verifica que email y usuario son unicos
+    if User.query.filter_by(username=username).first():
+        return jsonify({'error': 'El nombre de usuario ya existe'}), 400
+    if User.query.filter_by(email=email).first():
+        return jsonify({'error': 'El correo electrónico ya existe'}), 400
+
+    # Hashear password
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    # Crea nuevo usuario
+    try:
+        new_user = User(username=username, nombre=nombre,
+                        apellido=apellido, email=email, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'Usuario registrado exitosamente.'}), 201
+    except Exception as e:
+        print(f"Error al registrar usuario: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Error interno del servidor'}), 500
+
+
+def validate_registration_data(username, nombre, apellido, email, password):
+    errors = {}
+    if not username:
+        errors['username'] = 'El nombre de usuario es requerido'
+    if not nombre:
+        errors['nombre'] = 'El nombre es requerido'
+    if not apellido:
+        errors['apellido'] = 'El apellido es requerido'
+    if not email:
+        errors['email'] = 'El correo electrónico es requerido'
+    elif '@' not in email:
+        errors['email'] = 'El correo electrónico no es válido'
+    if not password:
+        errors['password'] = 'La contraseña es requerida'
+    elif len(password) < 6:
+        errors['password'] = 'La contraseña debe tener al menos 6 caracteres'
+    return errors
 
 
 # this only runs if `$ python src/main.py` is executed
