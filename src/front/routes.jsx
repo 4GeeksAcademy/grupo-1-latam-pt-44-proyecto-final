@@ -6,15 +6,9 @@ import {
     Route,
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
+import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
-import SplashScreen from "./components/SplashScreen"
-import { Home } from "./pages/Home.jsx";
-import {Register} from "./pages/Register";
-import {Login} from "./pages/Login";
-import {Categorias} from "./pages/Categorias";
-import {Historias} from "./pages/Historias";
-
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -29,12 +23,8 @@ export const router = createBrowserRouter(
 
         {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
         <Route path= "/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/categorias" element={<Categorias />} />
-        <Route path="/historias" element={<Historias />} />
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
         <Route path="/demo" element={<Demo />} />
-        </Route>
+      </Route>
     )
 );

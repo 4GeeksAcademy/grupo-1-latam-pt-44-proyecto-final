@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import rigoImageUrl from "../assets/img/rigo-baby.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import SplashScreen from "../components/SplashScreen.jsx";
 
 export const Home = () => {
 
-	const [loading, setLoading] = useState(true)
 	const { store, dispatch } = useGlobalReducer()
 
 	const loadMessage = async () => {
@@ -18,12 +16,10 @@ export const Home = () => {
 			const data = await response.json()
 
 			if (response.ok) dispatch({ type: "set_hello", payload: data.message })
-			setLoading(false)
 
 			return data
 
 		} catch (error) {
-			setLoading(false)
 			if (error.message) throw new Error(
 				`Could not fetch the message from the backend.
 				Please check if the backend is running and the backend port is public.`
@@ -38,7 +34,19 @@ export const Home = () => {
 
 	return (
 		<div className="text-center mt-5">
-			{loading ? <SplashScreen />:<div>¡Bienvenido!</div>}
+			<h1 className="display-4">Hello Rigo!!</h1>
+			<p className="lead">
+				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
+			</p>
+			<div className="alert alert-info">
+				{store.message ? (
+					<span>{store.message}</span>
+				) : (
+					<span className="text-danger">
+						Loading message from the backend (make sure your python 🐍 backend is running)...
+					</span>
+				)}
+			</div>
 		</div>
 	);
 }; 
