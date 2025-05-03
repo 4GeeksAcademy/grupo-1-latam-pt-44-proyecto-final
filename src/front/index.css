@@ -1,0 +1,11 @@
+body {   
+    background: #036EEC;
+    background: linear-gradient(180deg,rgba(3, 110, 236, 1) 17%, rgba(2, 73, 157, 1) 71%);
+    height: 100vh;
+    background-repeat: no-repeat;
+}
+
+.logo {
+    height: 40%;
+}
+
