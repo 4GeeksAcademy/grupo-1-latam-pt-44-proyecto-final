@@ -67,8 +67,8 @@ export const Register = () => {
     };
 
     return (
-        <div className="contaier d-flex justify-content-center align-items-center" style={{ backgroundImage:'linear-gradient(to top, #1a237e, #3f51b5)', backgroundRepeat: 'no-repeat' }}>
-            <div className="container-fluid p-4 rounded-3 shadow-lg text-center" style={{backgroundImage:'linear-gradient(to top, #1a237e, #3f51b5)', backgroundRepeat: 'no-repeat'}}>
+        <div className="contaier d-flex justify-content-center align-items-center">
+            <div className="container-fluid p-4 rounded-3 shadow-lg text-center">
                 <div className="logo mb-3">🐑</div>
                 <h2 className="text-white mb-4">Registro de Usuario</h2>
                 {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
