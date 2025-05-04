@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import DormireLogo from "../assets/img/sheep_logo.svg";
 
 export const Register = () => {
     const [username, setUserName] = useState('');
@@ -68,8 +69,10 @@ export const Register = () => {
 
     return (
         <div className="contaier d-flex justify-content-center align-items-center">
-            <div className="container-fluid p-4 rounded-3 shadow-lg text-center">
-                <div className="logo mb-3">🐑</div>
+            <div className="container-fluid vh-100 p-4 rounded-3 shadow-lg text-center">
+                <div className="logo" style={{ width: '90px', height: '90px' }}>
+                    <img className="logo" src={DormireLogo} alt="Logo" style={{ width: '100%', height: '100%', fill: 'white' }}/>
+                </div>
                 <h2 className="text-white mb-4">Registro de Usuario</h2>
                 {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
                 {successMessage && <div className="alert alert-success">{successMessage}</div>}
