@@ -1,7 +1,22 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState,useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const Navbar = () => {
+	const [token ,setToken] = useState(sessionStorage.getItem('access_token'));
+	const navigate = useNavigate();
+	
+	useEffect(() => {
+
+		if (!token) {
+			return;
+		}
+	}, [token]);
+
+	const handleLogout = () => {
+        sessionStorage.removeItem('access_token');
+        setToken(null);
+        navigate('/login'); 
+    };
 
 	return (
 		<nav className="navbar navbar-expand-lg" style={{backgroundColor: '#3f51b5'}} >
@@ -36,31 +51,16 @@ export const Navbar = () => {
 								Perfil
 							</Link>
 						</li>
+						{token && ( 
+							<li>
+								<button className="dropdown-item text-info" onClick={handleLogout}>
+									Logout
+								</button>
+							</li>
+						)}
 					</ul>
 				</div>
 			</div>
 		</nav>
 	);
 };
-
-
-
-// import { Link } from "react-router-dom";
-
-// export const Navbar = () => {
-
-// 	return (
-// 		<nav className="navbar navbar-light bg-light">
-// 			<div className="container">
-// 				<Link to="/">
-// 					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-// 				</Link>
-// 				<div className="ml-auto">
-// 					<Link to="/demo">
-// 						<button className="btn btn-primary">Check the Context in action</button>
-// 					</Link>
-// 				</div>
-// 			</div>
-// 		</nav>
-// 	);
-// };
