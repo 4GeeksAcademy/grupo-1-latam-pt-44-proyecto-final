@@ -6,8 +6,7 @@ import SplashScreen from "../components/SplashScreen.jsx";
 export const Home = () => {
 
 	const [loading, setLoading] = useState(true)
-	const { store, dispatch } = useGlobalReducer()
-
+	
 	const loadMessage = async () => {
 		try {
 			const backendUrl = import.meta.env.VITE_BACKEND_URL
@@ -33,7 +32,7 @@ export const Home = () => {
 	}
 
 	useEffect(() => {
-		loadMessage()
+		loadMessage();
 	}, [])
 
 	return (
