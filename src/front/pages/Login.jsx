@@ -1,138 +1,133 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import DormireLogo from "../assets/img/sheep_logo.svg";
+import FaFacebook from "../assets/img/facebook.svg";
+import FaInstagram from "../assets/img/instagram.svg";
+import FaX from "../assets/img/x.svg";
 
 export const Login = () => {
-    const [username, setUserName] = useState('');
-    const [nombre, setNombre] = useState('');
-    const [apellido, setApellido] = useState('');
-    const [email, setEmail] = useState('');
+    const [email, setemail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [infoData, setInfoData] = useState();
+
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (password !== confirmPassword) {
-            setErrorMessage('Las contraseñas no coinciden.');
-            setSuccessMessage('');
-            return;
-        }
-
-        const registrationData = {
-            username,
-            nombre,
-            apellido,
+        const loginData = {
             email,
             password,
-            is_active: true,
         };
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/Login`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(registrationData),
+                body: JSON.stringify(loginData),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                setSuccessMessage(data.message);
-                setErrorMessage('');
-                setTimeout(() => {
-                    navigate('/categorias');
-                }, 1500);
+                sessionStorage.setItem("access_token", data.access_token)
+                setInfoData(data)
+                navigate('/categorias');
+                window.location.reload();
             } else {
-                if (data.errors) {
-                    setErrorMessage(Object.values(data.errors).join('\n'));
-                } else if (data.error) {
+                if (data.error) {
                     setErrorMessage(data.error);
                 } else {
-                    setErrorMessage('Error al registrar la cuenta.');
+                    setErrorMessage('Error al iniciar sesión.');
                 }
-                setSuccessMessage('');
             }
         } catch (error) {
             console.error('Error al comunicarse con el backend:', error);
             setErrorMessage('Error al comunicarse con el servidor.');
-            setSuccessMessage('');
         }
     };
 
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+    
+        if (token) {
+          navigate('/categorias');
+          return;
+        }
+     
+      }, [navigate]);
+
     return (
-        <div className="contaier d-flex justify-content-center align-items-center">
-            <div className="container-fluid p-4 rounded-3 shadow-lg text-center">
-                <div className="logo mb-3">🐑</div>
-                <h2 className="text-white mb-4">Login</h2>
-                {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-                {successMessage && <div className="alert alert-success">{successMessage}</div>}
-                <form onSubmit={handleSubmit} className='row g-5'>
-                    <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Nombre de Usuario" value={username} onChange={(e) => setUserName(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
-                    </div>
-                    <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
-                    </div>
-                    <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
-                    </div>
-                    <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
-                    </div>
-                    <div className="mb-3 col-md-4">
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            className="form-control rounded-pill"
-                            placeholder="Contraseña"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }}
-                        />
-                        <div className="form-check mt-2 col-4">
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id="showPassword"
-                                checked={showPassword}
-                                onChange={() => setShowPassword(!showPassword)}
-                            />
-                            <label className="form-check-label text-white col-md-4" htmlFor="showPassword">Mostrar contraseña</label>
-                        </div>
-                    </div>
-                    <div className="mb-3 col-md-4">
-                        <input
-                            type={showConfirmPassword ? "text" : "password"}
-                            className="form-control rounded-pill"
-                            placeholder="Confirmar contraseña"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                            style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }}
-                        />
-                        <div className="form-check mt-2 col-md-4">
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                id="showConfirmPassword"
-                                checked={showConfirmPassword}
-                                onChange={() => setShowConfirmPassword(!showConfirmPassword)}
-                            />
-                            <label className="form-check-label text-white col-md-4" htmlFor="showConfirmPassword">Mostrar contraseña</label>
-                        </div>
-                    </div>
-                    <div className='col-12 text-center'>
-                        <button type="submit" className="btn btn-info btn-block rounded-pill color-black px-1 py-2 fw-bold" style={{ fontSize: '1.2em', borderRadius: '10px', cursor: 'pointer', boxShadow: '0 0 0 4px cyan, 0 0 0 3px #7fffd4' }}>Continuar</button>
-                    </div>
-                </form>
+        <motion.div
+            className="d-flex flex-column align-items-center justify-content-center vh-100 bg-primary"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
+            <div className="text-center">
+                <div className="logo mx-auto" style={{ width: '100px', height: '100px' }}>
+                    <img className="logo" src={DormireLogo} alt="Logo" style={{ width: '100%', height: '100%', fill: 'white' }}/>
+                </div>
+                <h2 className="text-white fw-bold">Iniciar Sesión</h2>
+                {errorMessage && <div className="alert alert-danger mt-3">{errorMessage}</div>}
             </div>
-        </div>
+
+            <form onSubmit={handleSubmit} className="d-grid gap-3" style={{ maxWidth: '300px', width: '100%' }}>
+                <div className="form-floating">
+                    <input
+                        type="text"
+                        className="form-control rounded-pill"
+                        id="floatingemail"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setemail(e.target.value)}
+                        required
+                    />
+                    <label htmlFor="floatingemail" className="text-muted">Email</label>
+                </div>
+                <div className="form-floating">
+                    <input
+                        type="password"
+                        className="form-control rounded-pill"
+                        id="floatingPassword"
+                        placeholder="Contraseña"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <label htmlFor="floatingPassword" className="text-muted">Contraseña</label>
+                </div>
+                {/* <div className="text-center">
+                    <Link to="/forgot-password" className="text-warning text-decoration-none">
+                        Olvidé mi contraseña
+                    </Link>
+                </div> */}
+                <button type="submit" className="btn btn-info btn-block rounded-pill text-white px-1 py-2 fw-bold" style={{ fontSize: '1.2em', borderRadius: '10px', cursor: 'pointer', boxShadow: '0 0 0 4px cyan, 0 0 0 3px #7fffd4' }}>
+                    Ingresar
+                </button>
+            </form>
+
+            <div className="text-center mt-3">
+                <Link to="/register" className="btn btn-link text-white text-decoration-none">
+                    Registrarse
+                </Link>
+            </div>
+
+            <div className="d-flex justify-content-center mt-4">
+                <Link to="#" className="text-white me-3"><img className="logo" src={FaFacebook} alt="Facebook" style={{ width: '100%', height: '100%', fill: 'white' }} /></Link>
+                <Link to="#" className="text-white me-3"><img className="logo" src={FaInstagram} alt="Instagram" style={{ width: '100%', height: '100%', fill: 'white' }}/></Link>
+                <Link to="#" className="text-white"><img className="logo" src={FaX} alt="X" style={{ width: '100%', height: '100%', fill: 'white' }}/></Link>
+            </div>
+
+            <div className="text-center mt-5">
+                <Link to="/privacy" className="text-muted me-3 text-decoration-none" style={{ fontSize: '0.8em' }}>Política de privacidad</Link>
+                <span className="text-muted" style={{ fontSize: '0.8em' }}>|</span>
+                <Link to="/terms" className="text-muted ms-3 text-decoration-none" style={{ fontSize: '0.8em' }}>Condiciones del servicio</Link>
+            </div>
+        </motion.div>
     );
-}
+};
