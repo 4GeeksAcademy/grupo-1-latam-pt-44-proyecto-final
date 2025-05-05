@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import DormireIcon from "../assets/img/sheep_color_icon.svg";
 
 export const Register = () => {
     const [username, setUserName] = useState('');
@@ -69,7 +70,7 @@ export const Register = () => {
     return (
         <div className="contaier d-flex justify-content-center align-items-center">
             <div className="container-fluid p-4 rounded-3 shadow-lg text-center">
-                <div className="logo mb-3">🐑</div>
+                <img className="icon_register" src={DormireIcon} alt="Icon" />
                 <h2 className="text-white mb-4">Registro de Usuario</h2>
                 {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
                 {successMessage && <div className="alert alert-success">{successMessage}</div>}
