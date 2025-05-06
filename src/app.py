@@ -78,7 +78,6 @@ def serve_any_other_file(path):
 # registro y login y en routes: todos los demásendpoints
 # Leo: Endpoint "/Login": Recibe usuario, valida, genera y retorna el token
 
-
 @app.route('/login', methods=['POST'])
 def get_logintoken():
     try:
