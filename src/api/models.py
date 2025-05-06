@@ -1,8 +1,13 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean,Text,ForeignKey
+from sqlalchemy import String, Boolean,Text,ForeignKey,Enum
 from sqlalchemy.orm import Mapped, mapped_column,relationship
-
+from enum import Enum as PyEnum
 db = SQLAlchemy()
+
+class UserRole(str,PyEnum):
+    ADMIN="ADMIN"
+    USER="USER"
+
 
 class User(db.Model):
     __tablename__ = "users"
@@ -14,6 +19,7 @@ class User(db.Model):
     apellido: Mapped[str] = mapped_column(String(120), nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    role: Mapped[UserRole] = mapped_column(Enum(UserRole,name="user_role_enum",native_enum=False),nullable=False,default=UserRole.USER)
 
     favoritos: Mapped[list["Favorito"]] = relationship(back_populates="usuario", cascade="all, delete-orphan")
 
@@ -24,6 +30,7 @@ class User(db.Model):
             "username": self.username,
             "nombre": self.nombre,
             "apellido": self.apellido,
+            "rol": self.role,
             "favoritos": [f.serialize() for f in self.favoritos]
         }
 
@@ -54,6 +61,7 @@ class Historia(db.Model):
     contenido: Mapped[str] = mapped_column(Text, nullable=False)
     imagen: Mapped[str] = mapped_column(String(255), nullable=True)  # URL o ruta de la imagen
     duracion: Mapped[int] = mapped_column(nullable=True)  # Duración en segundos, minutos o lo que definas
+    url: Mapped[str] = mapped_column(String(350), nullable=True)
     categoria_id: Mapped[int] = mapped_column(ForeignKey("categorias.id"), nullable=False)
 
     categoria: Mapped["Categoria"] = relationship(back_populates="historias")
@@ -66,6 +74,7 @@ class Historia(db.Model):
             "contenido": self.contenido,
             "imagen": self.imagen,
             "duracion": self.duracion,
+            "url": self.url,
             "categoria_id": self.categoria_id
         }
 
