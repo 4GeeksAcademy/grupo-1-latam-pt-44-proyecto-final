@@ -21,6 +21,7 @@ wtforms = "==3.1.2"
 sqlalchemy = "*"
 eralchemy2 = "*"
 flask-bcrypt = "*"
+requests = "*"
 
 [requires]
 python_version = "3.13"

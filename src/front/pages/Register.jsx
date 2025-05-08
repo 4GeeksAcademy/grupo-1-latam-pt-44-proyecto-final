@@ -68,26 +68,33 @@ export const Register = () => {
     };
 
     return (
+        <motion.div
+        className="d-flex flex-column align-items-center justify-content-center vh-100 bg-primary"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+    >
         <div className="contaier d-flex justify-content-center align-items-center">
             <div className="container-fluid vh-100 p-4 rounded-3 shadow-lg text-center">
-                <div className="logo" style={{ width: '90px', height: '90px' }}>
-                    <img className="logo" src={DormireLogo} alt="Logo" style={{ width: '100%', height: '100%', fill: 'white' }}/>
+                <div className="logo" style={{ width: '90px', height: '90px'}}>
+                    <img className="logo" src={DormireLogo} alt="Logo" style={{ width: '100%', height: '100%', fill: 'white' }} />
                 </div>
                 <h2 className="text-white mb-4">Registro de Usuario</h2>
                 {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
                 {successMessage && <div className="alert alert-success">{successMessage}</div>}
                 <form onSubmit={handleSubmit} className='row g-5'>
                     <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Nombre de Usuario" value={username} onChange={(e) => setUserName(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
+                        <input type="text" className="form-control rounded-pill" placeholder="Nombre de Usuario" value={username} onChange={(e) => setUserName(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid' }} />
                     </div>
                     <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
+                        <input type="text" className="form-control rounded-pill" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid'}} />
                     </div>
                     <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
+                        <input type="text" className="form-control rounded-pill" placeholder="Apellido" value={apellido} onChange={(e) => setApellido(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid' }} />
                     </div>
+                    
                     <div className="mb-3 col-md-4">
-                        <input type="text" className="form-control rounded-pill" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
+                        <input type="text" className="form-control rounded-pill" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid' }} />
                     </div>
                     <div className="mb-3 col-md-4">
                         <input
@@ -97,7 +104,7 @@ export const Register = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }}
+                            style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid' }}
                         />
                         <div className="form-check mt-2 col-4">
                             <input
@@ -118,7 +125,7 @@ export const Register = () => {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
-                            style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }}
+                            style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid' }}
                         />
                         <div className="form-check mt-2 col-md-4">
                             <input
@@ -131,11 +138,12 @@ export const Register = () => {
                             <label className="form-check-label text-white col-md-4" htmlFor="showConfirmPassword">Mostrar contraseña</label>
                         </div>
                     </div>
-                    <div className='col-12 text-center'>
-                        <button type="submit" className="btn btn-info btn-block rounded-pill color-black px-1 py-2 fw-bold" style={{ fontSize: '1.2em', borderRadius: '10px', cursor: 'pointer', boxShadow: '0 0 0 4px cyan, 0 0 0 3px #7fffd4' }}>Continuar</button>
+                    <div className='form-floating col-12 text-center'>
+                        <button type="submit" className=" btn btn-info btn-block rounded-pill text-white px-1 py-2 fw-bold" style={{ fontSize: '1.2em', borderRadius: '10px', cursor: 'pointer', boxShadow: '0 0 0 4px cyan, 0 0 0 3px #7fffd4' }}>Continuar</button>
                     </div>
                 </form>
             </div>
         </div>
+        </motion.div>
     );
 }

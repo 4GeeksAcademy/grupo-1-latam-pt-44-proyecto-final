@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DormireLogo from "../assets/img/sheep_logo.svg";
-import FaFacebook from "../assets/img/facebook.svg";
-import FaInstagram from "../assets/img/instagram.svg";
-import FaX from "../assets/img/x.svg";
+
 
 export const Login = () => {
     const [email, setemail] = useState('');
@@ -23,7 +21,11 @@ export const Login = () => {
         };
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
+
+            console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+            console.log(`${import.meta.env.VITE_BACKEND_URL}/login`)
+
+            const response = await fetch(`https://urban-space-umbrella-r4p6r6rqrrwjhpvp5-3001.app.github.dev/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -117,17 +119,6 @@ export const Login = () => {
                 </Link>
             </div>
 
-            <div className="d-flex justify-content-center mt-4">
-                <Link to="#" className="text-white me-3"><img className="logo" src={FaFacebook} alt="Facebook" style={{ width: '100%', height: '100%', fill: 'white' }} /></Link>
-                <Link to="#" className="text-white me-3"><img className="logo" src={FaInstagram} alt="Instagram" style={{ width: '100%', height: '100%', fill: 'white' }}/></Link>
-                <Link to="#" className="text-white"><img className="logo" src={FaX} alt="X" style={{ width: '100%', height: '100%', fill: 'white' }}/></Link>
-            </div>
-
-            <div className="text-center mt-5">
-                <Link to="/privacy" className="text-muted me-3 text-decoration-none" style={{ fontSize: '0.8em' }}>Política de privacidad</Link>
-                <span className="text-muted" style={{ fontSize: '0.8em' }}>|</span>
-                <Link to="/terms" className="text-muted ms-3 text-decoration-none" style={{ fontSize: '0.8em' }}>Condiciones del servicio</Link>
-            </div>
         </motion.div>
     );
 };

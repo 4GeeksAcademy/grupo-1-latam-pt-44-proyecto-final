@@ -15,6 +15,7 @@ import {Login} from "./pages/Login";
 import {Categorias} from "./pages/Categorias";
 import {Historias} from "./pages/Historias";
 import PeopleCardDetail from "./components/PeopleCardDetail";
+import { CategoriasPrueba } from "./pages/CategoriasPrueba.jsx";
 
 
 export const router = createBrowserRouter(
@@ -33,6 +34,7 @@ export const router = createBrowserRouter(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/categorias" element={<Categorias />} />
+            <Route path="/prueba" element={<CategoriasPrueba />} />
             <Route path="/historias" element={<Historias />} />
             <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
             <Route path="/demo" element={<Demo />} />
