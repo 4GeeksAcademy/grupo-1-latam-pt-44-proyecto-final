@@ -60,7 +60,16 @@ user_data = [
         "email": "pedro@aguilar.com",
         "password": "123456",
         "is_active": True
-    }
+    },
+        {
+        "username": "admin",
+        "nombre": "Administrator",
+        "apellido": "Mendez",
+        "email": "admin@example.com",
+        "password": "123456",
+        "is_active": True,
+        "rol": "ADMIN"
+    },
 ]
 
 print("Registrando usuarios...")
