@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import DormireIcon from "../assets/img/sheep_color_icon.svg";
+import { motion } from 'framer-motion';
+import DormireLogo from "../assets/img/sheep_logo.svg";
 
 export const Login = () => {
-    const [username, setUserName] = useState('');
+    const [email, setemail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    const [infoData, setInfoData] = useState();
+
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -16,10 +16,11 @@ export const Login = () => {
 
         const loginData = {
             email,
-            password
+            password,
         };
 
         try {
+
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/login`, {
                 method: 'POST',
                 headers: {
@@ -31,69 +32,180 @@ export const Login = () => {
             const data = await response.json();
 
             if (response.ok) {
-                setSuccessMessage(data.message);
-                setErrorMessage('');
-                setTimeout(() => {
-                    navigate('/categorias');
-                }, 1500);
+                sessionStorage.setItem("access_token", data.access_token)
+                setInfoData(data)
+                navigate('/categorias');
+                window.location.reload();
             } else {
-                if (data.errors) {
-                    setErrorMessage(Object.values(data.errors).join('\n'));
-                } else if (data.error) {
+                if (data.error) {
                     setErrorMessage(data.error);
                 } else {
-                    setErrorMessage('Error al registrar la cuenta.');
+                    setErrorMessage('Error al iniciar sesión.');
                 }
-                setSuccessMessage('');
             }
         } catch (error) {
             console.error('Error al comunicarse con el backend:', error);
             setErrorMessage('Error al comunicarse con el servidor.');
-            setSuccessMessage('');
         }
     };
 
-    return (
-        <div className="login container d-flex justify-content-center align-items-center min-vh-100">
-            <div className="container-fluid p-4 rounded-3 text-center">
-                <img className="icon-login mb-5" src={DormireIcon} alt="Icon" />
-                <h2 className="text-white mb-4">Registro de Usuario</h2>
-                {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
-                {successMessage && <div className="alert alert-success">{successMessage}</div>}
-                <form onSubmit={handleSubmit} className='row g-5'>
+    useEffect(() => {
+        const token = sessionStorage.getItem('access_token');
+    
+        if (token) {
+          navigate('/categorias');
+          return;
+        }
+     
+    }, [navigate]);
 
-                    <div className="d-flex flex-column align-items-center">
-                        <div className="mb-3">
-                            <input type="text" className="form-control rounded-pill" placeholder="Nombre de Usuario" value={username} onChange={(e) => setUserName(e.target.value)} required style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }} />
-                        </div>
-                        <div className="mb-3">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                className="form-control rounded-pill"
-                                placeholder="Contraseña"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                style={{ borderColor: 'cyan', borderWidth: '3px', borderStyle: 'solid', backgroundColor: '#3f51b5' }}
-                            />
-                            <div className="form-check mt-2">
-                                <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    id="showPassword"
-                                    checked={showPassword}
-                                    onChange={() => setShowPassword(!showPassword)}
-                                />
-                                <label className="form-check-label text-white" htmlFor="showPassword">Mostrar contraseña</label>
-                            </div>
-                        </div>
-                        <div className="olvide">Olvidé mi contraseña</div>
-                        <div className='col-12 text-center'>
-                            <button type="submit" className="btn btn-info btn-block rounded-pill color-black px-1 py-2 fw-bold" style={{ fontSize: '1.2em', borderRadius: '10px', cursor: 'pointer', boxShadow: '0 0 0 4px cyan, 0 0 0 3px #7fffd4' }}>Ingresar</button>
-                        </div>
-                    </div>
-                </form>
+    return (
+        <motion.div
+            className="d-flex flex-column align-items-center justify-content-center vh-100 position-relative overflow-hidden"
+            style={{
+                background: 'linear-gradient(135deg, #2563EB 0%, #0A1744 100%)',
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+        >
+            {/* Estrellas decorativas */}
+            <div className="position-absolute" style={{ top: '10%', left: '10%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
+            <div className="position-absolute" style={{ top: '15%', right: '15%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
+            <div className="position-absolute" style={{ bottom: '30%', left: '20%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
+            <div className="position-absolute" style={{ bottom: '20%', right: '10%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
+            
+            {/* Puntos decorativos */}
+            <div className="position-absolute" style={{ top: '30%', left: '25%' }}>
+                <div className="d-flex">
+                    <div className="rounded-circle mx-1" style={{ width: '6px', height: '6px', backgroundColor: '#4ADE80' }}></div>
+                    <div className="rounded-circle mx-1" style={{ width: '6px', height: '6px', backgroundColor: '#4ADE80' }}></div>
+                    <div className="rounded-circle mx-1" style={{ width: '6px', height: '6px', backgroundColor: '#4ADE80' }}></div>
+                </div>
             </div>
-        </div>
+            
+            {/* Logo */}
+            <div className="text-center mb-5">
+                <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                     style={{ width: '120px', height: '120px', backgroundColor: '#1E3A8A', position: 'relative' }}>
+                    <img src={DormireLogo || "/placeholder.svg"} alt="Logo" style={{ width: '80%', height: '80%' }}/>
+                    
+                    {/* Estrellas alrededor del logo */}
+                    <div className="position-absolute" style={{ top: '10%', right: '10%', color: 'white', fontSize: '16px' }}>✦</div>
+                    <div className="position-absolute" style={{ bottom: '20%', right: '15%', color: 'white', fontSize: '16px' }}>✦</div>
+                    <div className="position-absolute" style={{ top: '20%', left: '15%', color: 'white', fontSize: '16px' }}>✦</div>
+                    
+                    {/* Puntos verdes alrededor del logo */}
+                    <div className="position-absolute rounded-circle" style={{ top: '20%', right: '20%', width: '8px', height: '8px', backgroundColor: '#4ADE80' }}></div>
+                    <div className="position-absolute rounded-circle" style={{ top: '20%', left: '20%', width: '8px', height: '8px', backgroundColor: '#4ADE80' }}></div>
+                </div>
+            </div>
+
+            {errorMessage && <div className="alert alert-danger mb-4" style={{ maxWidth: '300px', width: '100%' }}>{errorMessage}</div>}
+
+            <form onSubmit={(e)=>{handleSubmit(e)}} className="d-flex flex-column align-items-center" style={{ maxWidth: '300px', width: '100%' }}>
+                {/* Campo de usuario */}
+                <div className="mb-3 w-100">
+                    <input
+                        type="text"
+                        className="form-control py-3"
+                        placeholder="Usuario"
+                        value={email}
+                        onChange={(e) => setemail(e.target.value)}
+                        required
+                        style={{ 
+                            backgroundColor: 'rgba(59, 130, 246, 0.5)', 
+                            border: 'none', 
+                            borderRadius: '30px',
+                            color: 'white',
+                            paddingLeft: '20px'
+                        }}
+                    />
+                </div>
+                
+                {/* Campo de contraseña */}
+                <div className="mb-2 w-100">
+                    <input
+                        type="password"
+                        className="form-control py-3"
+                        placeholder="Contraseña"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        style={{ 
+                            backgroundColor: 'rgba(59, 130, 246, 0.5)', 
+                            border: 'none', 
+                            borderRadius: '30px',
+                            color: 'white',
+                            paddingLeft: '20px'
+                        }}
+                    />
+                </div>
+                
+                {/* Olvidé mi contraseña */}
+                <div className="text-center mb-4 w-100">
+                    <Link to="/forgot-password" className="text-white-50 text-decoration-none" style={{ fontSize: '0.9rem' }}>
+                        Olvidé mi contraseña
+                    </Link>
+                </div>
+                
+                {/* Botón de ingresar con luna decorativa */}
+                <div className="position-relative w-100 mb-3">
+                    <button type="submit" className="btn w-100 py-2" 
+                        style={{ 
+                            backgroundColor: '#4ADE80', 
+                            borderRadius: '30px',
+                            color: '#0F172A',
+                            fontWeight: 'bold',
+                            boxShadow: '0 0 15px rgba(74, 222, 128, 0.5)'
+                        }}>
+                        Ingresar
+                    </button>
+                    <div className="position-absolute" style={{ bottom: '-10px', right: '-30px' }}>
+                        <div style={{ 
+                            width: '40px', 
+                            height: '40px', 
+                            borderRadius: '50%', 
+                            backgroundColor: '#F59E0B',
+                            boxShadow: '0 0 10px rgba(245, 158, 11, 0.5)',
+                            transform: 'rotate(230deg)'
+                        }}></div>
+                    </div>
+                </div>
+                
+                {/* Registrarse */}
+                <div className="text-center mb-5">
+                    <Link to="/register" className="text-white text-decoration-underline">
+                        Registrarse
+                    </Link>
+                </div>
+                
+                {/* Iconos de redes sociales */}
+                <div className="d-flex justify-content-center gap-4 mb-5">
+                    <a href="#" className="text-white-50">
+                        <i className="fa-solid fa-envelope fs-5"></i>
+                    </a>
+                    <a href="#" className="text-white-50">
+                        <i className="fa-brands fa-facebook fs-5"></i>
+                    </a>
+                    <a href="#" className="text-white-50">
+                        <i className="fa-brands fa-instagram fs-5"></i>
+                    </a>
+                </div>
+                
+                {/* Footer */}
+                <div className="text-center position-absolute bottom-0 mb-4">
+                    <div className="d-flex justify-content-center gap-3">
+                        <a href="#" className="text-white-50 text-decoration-none" style={{ fontSize: '0.8rem' }}>
+                            Política de privacidad
+                        </a>
+                        <span className="text-white-50">|</span>
+                        <a href="#" className="text-white-50 text-decoration-none" style={{ fontSize: '0.8rem' }}>
+                            Condiciones del servicio
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </motion.div>
     );
-}
+};
