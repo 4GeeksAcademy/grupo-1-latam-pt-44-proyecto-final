@@ -89,7 +89,7 @@ def get_logintoken():
         user = db.session.execute(db.select(User).filter_by(
             email=dataFront["email"])).scalar_one_or_none()
         # Nota: Se obtiene el campo de BD a pesar de que en el Modelo de BD no se expone como serializado
-        print("Usuario objero de BD ", user.password)
+        # print("Usuario objero de BD ", user.password)
 
         # Validar que exista usuario en BD y su contraseña
         if not user:

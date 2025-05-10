@@ -1,13 +1,14 @@
 import requests
 import json
 import urllib3
+import os
 
 # Deshabilitar advertencias de SSL (solo para desarrollo)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Configuración base
 ssl_verification = False  # Cambia a True en producción si tienes certificados válidos
-base_url = "https://urban-space-umbrella-r4p6r6rqrrwjhpvp5-3001.app.github.dev"
+base_url = os.getenv("VITE_BACKEND_URL")
 headers_json = {'Content-Type': 'application/json'}
 
 # Función para realizar solicitudes POST a la API
