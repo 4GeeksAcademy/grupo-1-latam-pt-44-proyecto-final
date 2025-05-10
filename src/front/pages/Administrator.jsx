@@ -6,7 +6,7 @@ import { TableCategories } from "../components/Administrator/TableCategories";
 import { TableStories } from "../components/Administrator/TableStories";
 
 export const Administrator = () => {
-    const [selectedTable, setSelectedTable] = useState("stories");
+    const [selectedTable, setSelectedTable] = useState("users");
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
 
