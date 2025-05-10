@@ -10,8 +10,6 @@ import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import SplashScreen from "./components/SplashScreen"
 import { Home } from "./pages/Home.jsx";
-import {Register} from "./pages/Register";
-import { Login } from "./pages/Login.jsx";
 import { Administrator } from "./pages/Administrator.jsx"
 import { Register } from "./pages/Register";
 import { Login } from "./pages/Login";
@@ -20,6 +18,8 @@ import { Historias } from "./pages/Historias";
 import PeopleCardDetail from "./components/PeopleCardDetail";
 import { Categoria } from "./pages/Categoria";
 import { HistoriaPlayer } from "./pages/HistoriaPlayer.jsx";
+import { Profile } from "./pages/Profile.jsx";
+import { NotFound } from "./pages/NotFound.jsx";
 
 
 export const router = createBrowserRouter(
@@ -31,19 +31,13 @@ export const router = createBrowserRouter(
         // Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
 
         // Root Route: All navigation will start from here.
-        <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
+        <Route path="/" element={<Layout />} errorElement={<NotFound/>} >
 
-        {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
-        <Route path= "/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
-        <Route path="/demo" element={<Demo />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/administrator" element={<Administrator />} />
             {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/perfil" element={<Profile />} />
             <Route path="/categorias" element={<Categorias />} />
             <Route path="/categorias/:id" element={<Categoria />} />
             <Route path="/historias" element={<Historias />} />
@@ -51,6 +45,7 @@ export const router = createBrowserRouter(
             <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
             <Route path="/demo" element={<Demo />} />
             <Route path="/detailspeople/:contactID" element={<PeopleCardDetail />} />
+            <Route path="/administrator" element={<Administrator />} />
         </Route>
     )
 );
