@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db, User
+from api.models import db, User, UserRole
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -16,6 +16,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt, get_jwt_identity
 from flask_cors import CORS
 from sqlalchemy import select
+from datetime import timedelta
 
 # from models import Person
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -23,6 +24,7 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = "nuestra_clave_secreta"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)  # Inicializar jwt para que funcione dentro del BackEnd
 CORS(app)
 bcrypt = Bcrypt(app)
@@ -98,7 +100,7 @@ def get_logintoken():
         if not bcrypt.check_password_hash(user.password, dataFront.get("password")):
             return jsonify({"ok": False, "msg": "Usuario no existe o su contraseña es incorrecta"}), 401
 
-        user_rol = user.rol
+        user_rol = user.role
 
         # Opcional: Agrego Claims como información
         claims = {
@@ -113,7 +115,8 @@ def get_logintoken():
         return jsonify({
             "ok": True,
             "access_token": access_token,
-            "msg": "Loguin existoso!"
+            "rol": user_rol,
+            "msg": "Login existoso!"
         }), 200
 
     except Exception as e:
@@ -130,7 +133,7 @@ def register():
     apellido = data.get('apellido')
     email = data.get('email')
     password = data.get('password')
-    rol = data.get('rol')
+    rol = data.get('rol', UserRole.USER.value)
     is_active = data.get('is_active')
 
     # Valida datos
@@ -151,7 +154,7 @@ def register():
     # Crea nuevo usuario
     try:
         new_user = User(username=username, nombre=nombre,
-                        apellido=apellido, email=email, password=hashed_password, rol=rol, is_active=is_active)
+                        apellido=apellido, email=email, password=hashed_password, role=rol, is_active=is_active)
         db.session.add(new_user)
         db.session.commit()
         return jsonify({'message': 'Usuario registrado exitosamente.'}), 201
@@ -162,7 +165,7 @@ def register():
 
 
 def validate_registration_data(username, nombre, apellido, email, password, rol, is_active):
-    print (rol)
+    #print (rol)
     errors = {}
     if not username:
         errors['username'] = 'El nombre de usuario es requerido'
@@ -180,7 +183,7 @@ def validate_registration_data(username, nombre, apellido, email, password, rol,
         errors['password'] = 'La contraseña debe tener al menos 6 caracteres'
     if not is_active:
         errors['is_active'] = 'El parametro is_active es requerido'
-    if rol != "user" and rol != "admin":
+    if rol != "USER" and rol != "ADMIN":
         errors['rol'] = 'El rol no es válido'
 
     return errors
@@ -195,13 +198,13 @@ def get_private():
     return jsonify(user.serialize()), 200
 
 # Paso2: Endpoint "/usuario": Actualizar usuario
-@app.route('/usuario/<int:usuario_id>', methods=['PUT'])
+@app.route('/admin/usuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
 def update_profile(usuario_id):
     current_user_id = get_jwt_identity()
     user_jwt = get_jwt()
 
-    if user_jwt.get("rol") != "admin":
+    if user_jwt.get("rol") != UserRole.ADMIN.value:
         return jsonify({"msg": "No autorizado"}), 401
 
     try:
@@ -228,13 +231,13 @@ def update_profile(usuario_id):
         return jsonify({"msg": "Error al actualizar el perfil", "error": str(e)}), 500
 
 # Endpoint "/usuario/todos: Obtiene todos los usuarios"
-@app.route("/usuarios", methods=["GET"])
+@app.route("/admin/usuarios", methods=["GET"])
 @jwt_required()
 def get_all_users():
     user_id = get_jwt_identity()
     user_rol = get_jwt()
 
-    if user_rol["rol"] != "admin":
+    if user_rol["rol"] != UserRole.ADMIN.value:
         return jsonify({"msg": "no autorizado"}), 401
 
     users = db.session.scalars(select(User)).all()
@@ -242,13 +245,13 @@ def get_all_users():
     return jsonify({"users": [user.serialize() for user in users]}), 200
 
 # Eliminar Usuario:
-@app.route('/usuario/<int:usuario_id>', methods=['DELETE'])
+@app.route('/admin/usuario/<int:usuario_id>', methods=['DELETE'])
 @jwt_required()
 def delete_profile(usuario_id):
     current_user_id = get_jwt_identity()
     user_jwt = get_jwt()
 
-    if user_jwt.get("rol") != "admin":
+    if user_jwt.get("rol") != UserRole.ADMIN.value:
         return jsonify({"msg": "No autorizado"}), 401
 
     try:
@@ -265,6 +268,38 @@ def delete_profile(usuario_id):
         db.session.rollback()
         return jsonify({"msg": "Error al eliminar el usuario", "error": str(e)}), 500
 
+# Rutas para perfil de usuario
+@app.route('/usuario/<int:usuario_id>', methods=['PUT'])
+@jwt_required()
+def update_user_profile(usuario_id):
+    current_user_id = get_jwt_identity()
+    user_jwt = get_jwt()
+
+    if user_jwt.get("rol") != UserRole.USER.value:
+        return jsonify({"msg": "No autorizado"}), 401
+
+    try:
+        user = db.session.get(User, usuario_id)
+        if not user:
+            return jsonify({"msg": "Usuario no encontrado"}), 404
+
+        data = request.get_json(silent=True) or {}
+
+        user.email = data.get("email", user.email)
+        user.is_active = data.get("activo", user.is_active)
+        user.username = data.get("username", user.username)
+        user.nombre = data.get("nombre", user.nombre)
+        user.apellido = data.get("apellido", user.apellido)
+
+        if "password" in data and data["password"]:
+            user.password = bcrypt.generate_password_hash(data["password"])
+
+        db.session.commit()
+        return jsonify({"message": "Perfil actualizado"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Error al actualizar el perfil", "error": str(e)}), 500
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
