@@ -57,7 +57,7 @@ export const Home = () => {
             description: "Déjate llevar por narraciones suaves y envolventes diseñadas para calmar tu mente y prepararte para un descanso profundo.",
             icon: "fa-book",
             color: "#4ADE80", // Verde
-            route: "/historias"
+            route: "/categorias/1"
         },
         {
             id: 2,
@@ -65,7 +65,7 @@ export const Home = () => {
             description: "Encuentra la paz interior y reduce el estrés con nuestras sesiones de meditación guiada, perfectas para relajar tu cuerpo y mente antes de dormir.",
             icon: "fa-om",
             color: "#F59E0B", // Ámbar
-            route: "/meditaciones"
+            route: "/categorias/2"
         },
         {
             id: 3,
@@ -73,7 +73,7 @@ export const Home = () => {
             description: "Disfruta de una variedad de sonidos armónicos y melodías suaves creadas específicamente para inducir la relajación y facilitar un sueño tranquilo.",
             icon: "fa-music",
             color: "#3B82F6", // Azul
-            route: "/musica"
+            route: "/categorias/3"
         },
         {
             id: 4,
@@ -81,7 +81,7 @@ export const Home = () => {
             description: "Sumérgete en la tranquilidad de la naturaleza con paisajes sonoros relajantes como la lluvia suave, el canto de los pájaros y el susurro del mar.",
             icon: "fa-leaf",
             color: "#EC4899", // Rosa
-            route: "/sonidos"
+            route: "/categorias/4"
         }
     ];
 
