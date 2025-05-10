@@ -3,19 +3,20 @@ import { Link, useNavigate } from 'react-router-dom';
 import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Navbar = () => {
-	const [token, setToken] = useState(sessionStorage.getItem('access_token'));
+	const accessToken = sessionStorage.getItem('access_token');
+	//const [accessToken, setToken] = useState(accessToken);
 	const navigate = useNavigate();
 	
 	useEffect(() => {
-		if (!token) {
+		if (!accessToken) {
 			return;
 		}
-	}, [token]);
+	}, [accessToken]);
 
 	const handleLogout = () => {
         sessionStorage.removeItem('access_token');
-        setToken(null);
-        navigate('/login'); 
+        //setToken(null);
+        navigate('/'); 
     };
 
 	const { store, dispatch } = useGlobalReducer();
@@ -38,7 +39,7 @@ export const Navbar = () => {
 								<span>Inicio</span>
 							</Link>
 						</li>
-					{token ? "": (	<><li className="nav-item text-center mx-2">
+					{accessToken ? "": (	<><li className="nav-item text-center mx-2">
 							<Link className="nav-link text-white d-flex flex-column align-items-center" to="/login">
 								<i className="fa-solid fa-sign-in-alt mb-1 fs-5"></i>
 								<span>Login</span>
@@ -54,14 +55,14 @@ export const Navbar = () => {
 				
 						
 						{/* Botón de logout */}
-						{token && ( 
+						{accessToken && ( 
 									<><li className="nav-item text-center mx-2">
 								<Link className="nav-link text-white d-flex flex-column align-items-center" to="/categorias">
 									<i className="fa-solid fa-list mb-1 fs-5"></i>
 									<span>Categorías</span>
 								</Link>
 							</li><li className="nav-item text-center mx-2">
-									<Link className="nav-link text-white d-flex flex-column align-items-center" to="/favoritos">
+									<Link className="nav-link text-white d-flex flex-column align-items-center" to="/perfil">
 										<i className="fa-solid fa-moon mb-1 fs-5"></i>
 										<span>Perfil</span>
 									</Link>
