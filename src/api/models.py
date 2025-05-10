@@ -14,6 +14,7 @@ class User(db.Model):
     apellido: Mapped[str] = mapped_column(String(120), nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    rol: Mapped[str] = mapped_column(String(10), nullable=False, default="user")
 
     favoritos: Mapped[list["Favorito"]] = relationship(back_populates="usuario", cascade="all, delete-orphan")
 
@@ -24,6 +25,7 @@ class User(db.Model):
             "username": self.username,
             "nombre": self.nombre,
             "apellido": self.apellido,
+            "rol": self.rol,
             "favoritos": [f.serialize() for f in self.favoritos]
         }
 

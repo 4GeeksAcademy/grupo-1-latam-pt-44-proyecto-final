@@ -14,12 +14,6 @@ export const Login = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (password !== confirmPassword) {
-            setErrorMessage('Las contraseñas no coinciden.');
-            setSuccessMessage('');
-            return;
-        }
-
         const loginData = {
             email,
             password

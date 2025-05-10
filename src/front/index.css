@@ -21,3 +21,8 @@ body {
     padding-bottom: 40px;
 }
 
+.hover:hover {
+    cursor: pointer;
+    background-color: cadetblue;
+}
+
