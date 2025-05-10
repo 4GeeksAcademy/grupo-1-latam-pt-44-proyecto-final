@@ -1,6 +1,12 @@
 import React from "react";
-
+import { Link, useNavigate } from "react-router-dom";
 export const NavbarAdministrator = ({ toggleSidebar }) => {
+    const navigate = useNavigate();
+  	const handleLogout = () => {
+        sessionStorage.removeItem('access_token');
+        //setToken(null);
+        navigate('/'); 
+    };
   return (
     <nav
       className="navbar navbar-expand-lg py-2"
@@ -152,11 +158,11 @@ export const NavbarAdministrator = ({ toggleSidebar }) => {
                 </a>
               </li> */}
               {/* <li><hr className="dropdown-divider" style={{ borderColor: 'rgba(255,255,255,0.1)' }} /></li> */}
-              <li>
-                <a className="dropdown-item text-danger" href="#">
-                  <i className="fa-solid fa-right-from-bracket me-2"></i>
+              <li className="dropdown-item text-danger" onClick={()=>{handleLogout()}}>
+               
+                  <i className="fa-solid fa-right-from-bracket me-2" ></i>
                   Cerrar sesión
-                </a>
+                
               </li>
             </ul>
           </div>
