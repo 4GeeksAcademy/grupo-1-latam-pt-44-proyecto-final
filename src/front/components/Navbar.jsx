@@ -4,9 +4,8 @@ import useGlobalReducer from "../hooks/useGlobalReducer";
 
 export const Navbar = () => {
 	const accessToken = sessionStorage.getItem('access_token');
-	//const [accessToken, setToken] = useState(accessToken);
 	const navigate = useNavigate();
-	
+
 	useEffect(() => {
 		if (!accessToken) {
 			return;
@@ -14,19 +13,43 @@ export const Navbar = () => {
 	}, [accessToken]);
 
 	const handleLogout = () => {
-        sessionStorage.removeItem('access_token');
-        //setToken(null);
-        navigate('/'); 
-    };
+		sessionStorage.removeItem('access_token');
+		//setToken(null);
+		navigate('/');
+	};
 
 	const { store, dispatch } = useGlobalReducer();
 
-	const deleteFromFavorites = (uid, category) => {
-		dispatch({ type: 'delete_from_favorite', payload: { uid, category } })
+	const deleteFromFavorites = async (historiaId) => {
+		console.log(historiaId)
+
+		try {
+			const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/favoritos/${historiaId}`, {
+				method: 'DELETE',
+				headers: {
+					Authorization: `Bearer ${sessionStorage.getItem("access_token")}`
+				}
+			});
+
+			const data = await response.json();
+			if (response.ok) {
+				dispatch({ type: 'delete_from_favorite', payload: { historia_id:historiaId } })
+			} else {
+				if (data.error) {
+					setErrorMessage(data.error);
+				} else {
+					setErrorMessage('Error al eliminar Favoritos del usuario');
+				}
+			}
+		} catch (error) {
+			console.error('Error al comunicarse con el backend:', error);
+			setErrorMessage('Error al comunicarse con el servidor.');
+		}
+
 	};
 
 	return (
-		<nav className="navbar navbar-expand-lg" style={{backgroundColor: '#000000'}} >
+		<nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#000000' }} >
 			<div className="container-fluid">
 				<button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavNegro" aria-controls="navbarNavNegro" aria-expanded="false" aria-label="Toggle navigation">
 					<span className="navbar-toggler-icon"></span>
@@ -39,7 +62,7 @@ export const Navbar = () => {
 								<span>Inicio</span>
 							</Link>
 						</li>
-					{accessToken ? "": (	<><li className="nav-item text-center mx-2">
+						{accessToken ? "" : (<><li className="nav-item text-center mx-2">
 							<Link className="nav-link text-white d-flex flex-column align-items-center" to="/login">
 								<i className="fa-solid fa-sign-in-alt mb-1 fs-5"></i>
 								<span>Login</span>
@@ -51,12 +74,12 @@ export const Navbar = () => {
 								</Link>
 							</li></>)}
 
-				
-				
-						
+
+
+
 						{/* Botón de logout */}
-						{accessToken && ( 
-									<><li className="nav-item text-center mx-2">
+						{accessToken && (
+							<><li className="nav-item text-center mx-2">
 								<Link className="nav-link text-white d-flex flex-column align-items-center" to="/categorias">
 									<i className="fa-solid fa-list mb-1 fs-5"></i>
 									<span>Categorías</span>
@@ -82,21 +105,21 @@ export const Navbar = () => {
 										{store.favorites.length === 0 ? (
 											<li><span className="dropdown-item text-muted">No favorites yet</span></li>
 										) : (
-											store.favorites.map((item, index) => (
-												<li key={index}>
+											store.favorites.map((item, index) => {
+												return <li key={index}>
 													<div className="dropdown-item d-flex justify-content-between align-items-center">
-														<Link to={item.linkto} className="text-decoration-none text-dark">
-															{item.name}
+														<Link to={`${import.meta.env.VITE_FRONTEND_URL}/historias/${item.historia_id}`} className="text-decoration-none text-dark">
+															{item.nombre_historia}
 														</Link>
 														<i className="fa-solid fa-trash"
 															style={{ cursor: "pointer" }}
 															onClick={() => {
-																deleteFromFavorites(item.uid, item.category);
-															} }
+																deleteFromFavorites(item.historia_id);
+															}}
 														></i>
 													</div>
 												</li>
-											))
+											})
 										)}
 									</ul>
 								</li><li className="nav-item text-center mx-2">
