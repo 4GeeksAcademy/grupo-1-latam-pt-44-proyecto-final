@@ -30,12 +30,16 @@ export const Login = () => {
             });
 
             const data = await response.json();
-
             if (response.ok) {
                 sessionStorage.setItem("access_token", data.access_token)
                 setInfoData(data)
-                navigate('/categorias');
-                window.location.reload();
+                if (data.rol === 'ADMIN') {
+                    navigate('/administrator');
+                } else {
+                    navigate('/categorias');
+                }
+
+                //window.location.reload();
             } else {
                 if (data.error) {
                     setErrorMessage(data.error);
@@ -51,12 +55,12 @@ export const Login = () => {
 
     useEffect(() => {
         const token = sessionStorage.getItem('access_token');
-    
+
         if (token) {
-          navigate('/categorias');
-          return;
+            navigate('/categorias');
+            return;
         }
-     
+
     }, [navigate]);
 
     return (
@@ -74,7 +78,7 @@ export const Login = () => {
             <div className="position-absolute" style={{ top: '15%', right: '15%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
             <div className="position-absolute" style={{ bottom: '30%', left: '20%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
             <div className="position-absolute" style={{ bottom: '20%', right: '10%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
-            
+
             {/* Puntos decorativos */}
             <div className="position-absolute" style={{ top: '30%', left: '25%' }}>
                 <div className="d-flex">
@@ -83,18 +87,18 @@ export const Login = () => {
                     <div className="rounded-circle mx-1" style={{ width: '6px', height: '6px', backgroundColor: '#4ADE80' }}></div>
                 </div>
             </div>
-            
+
             {/* Logo */}
             <div className="text-center mb-5">
-                <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
-                     style={{ width: '120px', height: '120px', backgroundColor: '#1E3A8A', position: 'relative' }}>
-                    <img src={DormireLogo || "/placeholder.svg"} alt="Logo" style={{ width: '80%', height: '80%' }}/>
-                    
+                <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                    style={{ width: '120px', height: '120px', backgroundColor: '#1E3A8A', position: 'relative' }}>
+                    <img src={DormireLogo || "/placeholder.svg"} alt="Logo" style={{ width: '80%', height: '80%' }} />
+
                     {/* Estrellas alrededor del logo */}
                     <div className="position-absolute" style={{ top: '10%', right: '10%', color: 'white', fontSize: '16px' }}>✦</div>
                     <div className="position-absolute" style={{ bottom: '20%', right: '15%', color: 'white', fontSize: '16px' }}>✦</div>
                     <div className="position-absolute" style={{ top: '20%', left: '15%', color: 'white', fontSize: '16px' }}>✦</div>
-                    
+
                     {/* Puntos verdes alrededor del logo */}
                     <div className="position-absolute rounded-circle" style={{ top: '20%', right: '20%', width: '8px', height: '8px', backgroundColor: '#4ADE80' }}></div>
                     <div className="position-absolute rounded-circle" style={{ top: '20%', left: '20%', width: '8px', height: '8px', backgroundColor: '#4ADE80' }}></div>
@@ -103,7 +107,7 @@ export const Login = () => {
 
             {errorMessage && <div className="alert alert-danger mb-4" style={{ maxWidth: '300px', width: '100%' }}>{errorMessage}</div>}
 
-            <form onSubmit={(e)=>{handleSubmit(e)}} className="d-flex flex-column align-items-center" style={{ maxWidth: '300px', width: '100%' }}>
+            <form onSubmit={(e) => { handleSubmit(e) }} className="d-flex flex-column align-items-center" style={{ maxWidth: '300px', width: '100%' }}>
                 {/* Campo de usuario */}
                 <div className="mb-3 w-100">
                     <input
@@ -113,16 +117,16 @@ export const Login = () => {
                         value={email}
                         onChange={(e) => setemail(e.target.value)}
                         required
-                        style={{ 
-                            backgroundColor: 'rgba(59, 130, 246, 0.5)', 
-                            border: 'none', 
+                        style={{
+                            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                            border: 'none',
                             borderRadius: '30px',
                             color: 'white',
                             paddingLeft: '20px'
                         }}
                     />
                 </div>
-                
+
                 {/* Campo de contraseña */}
                 <div className="mb-2 w-100">
                     <input
@@ -132,28 +136,28 @@ export const Login = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        style={{ 
-                            backgroundColor: 'rgba(59, 130, 246, 0.5)', 
-                            border: 'none', 
+                        style={{
+                            backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                            border: 'none',
                             borderRadius: '30px',
                             color: 'white',
                             paddingLeft: '20px'
                         }}
                     />
                 </div>
-                
+
                 {/* Olvidé mi contraseña */}
                 <div className="text-center mb-4 w-100">
                     <Link to="/forgot-password" className="text-white-50 text-decoration-none" style={{ fontSize: '0.9rem' }}>
                         Olvidé mi contraseña
                     </Link>
                 </div>
-                
+
                 {/* Botón de ingresar con luna decorativa */}
                 <div className="position-relative w-100 mb-3">
-                    <button type="submit" className="btn w-100 py-2" 
-                        style={{ 
-                            backgroundColor: '#4ADE80', 
+                    <button type="submit" className="btn w-100 py-2"
+                        style={{
+                            backgroundColor: '#4ADE80',
                             borderRadius: '30px',
                             color: '#0F172A',
                             fontWeight: 'bold',
@@ -162,24 +166,24 @@ export const Login = () => {
                         Ingresar
                     </button>
                     <div className="position-absolute" style={{ bottom: '-10px', right: '-30px' }}>
-                        <div style={{ 
-                            width: '40px', 
-                            height: '40px', 
-                            borderRadius: '50%', 
+                        <div style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '50%',
                             backgroundColor: '#F59E0B',
                             boxShadow: '0 0 10px rgba(245, 158, 11, 0.5)',
                             transform: 'rotate(230deg)'
                         }}></div>
                     </div>
                 </div>
-                
+
                 {/* Registrarse */}
                 <div className="text-center mb-5">
                     <Link to="/register" className="text-white text-decoration-underline">
                         Registrarse
                     </Link>
                 </div>
-                
+
                 {/* Iconos de redes sociales */}
                 <div className="d-flex justify-content-center gap-4 mb-5">
                     <a href="#" className="text-white-50">
@@ -192,7 +196,7 @@ export const Login = () => {
                         <i className="fa-brands fa-instagram fs-5"></i>
                     </a>
                 </div>
-                
+
                 {/* Footer */}
                 <div className="text-center position-absolute bottom-0 mb-4">
                     <div className="d-flex justify-content-center gap-3">
