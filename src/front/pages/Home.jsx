@@ -5,8 +5,10 @@ import { auto } from '@cloudinary/url-gen/actions/resize';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
 import { AdvancedImage } from '@cloudinary/react';
 import { Link } from 'react-router-dom';
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 export const Home = () => {
+    const {store, dispatch } = useGlobalReducer();
     const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState(null);
     const cld = new Cloudinary({ cloud: { cloudName: 'dz71k8oei' } });
@@ -209,7 +211,7 @@ export const Home = () => {
                     </div>
 
                     {/* Footer */}
-                    <footer className="bg-dark text-light text-center py-4">
+                    {/* <footer className="bg-dark text-light text-center py-4">
                         <div className="container">
                             <div className="mb-3">
                                 <a href="#" className="text-white-50 mx-2">
@@ -229,7 +231,7 @@ export const Home = () => {
                             </div>
                             <p className="mb-0 text-white-50">&copy; 2025 Dormire. Todos los derechos reservados.</p>
                         </div>
-                    </footer>
+                    </footer> */}
                 </div>
             )}
         </div>
