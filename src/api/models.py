@@ -31,6 +31,7 @@ class User(db.Model):
             "nombre": self.nombre,
             "apellido": self.apellido,
             "rol": self.role,
+            "activo": self.is_active,
             "favoritos": [f.serialize() for f in self.favoritos]
         }
 
