@@ -8,6 +8,7 @@ from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db, User, UserRole
 from api.routes import api
+from api.init_db import init_db_bp
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask import Flask, request, jsonify
@@ -50,6 +51,7 @@ setup_commands(app)
 
 # Add all endpoints form the API with a "api" prefix
 app.register_blueprint(api, url_prefix='/api')
+app.register_blueprint(init_db_bp, url_prefix='/api')
 
 
 # Handle/serialize errors like a JSON object
@@ -80,6 +82,7 @@ def serve_any_other_file(path):
 # registro y login y en routes: todos los demásendpoints
 # Leo: Endpoint "/Login": Recibe usuario, valida, genera y retorna el token
 
+
 @app.route('/login', methods=['POST'])
 def get_logintoken():
     try:
@@ -96,7 +99,7 @@ def get_logintoken():
         # Validar que exista usuario en BD y su contraseña
         if not user:
             return jsonify({"ok": False, "msg": "Usuario no existe o sus credenciales son incorrectas"}), 401
-        
+
         if not bcrypt.check_password_hash(user.password, dataFront.get("password")):
             return jsonify({"ok": False, "msg": "Usuario no existe o su contraseña es incorrecta"}), 401
 
@@ -165,7 +168,7 @@ def register():
 
 
 def validate_registration_data(username, nombre, apellido, email, password, rol, is_active):
-    #print (rol)
+    # print (rol)
     errors = {}
     if not username:
         errors['username'] = 'El nombre de usuario es requerido'
@@ -190,6 +193,8 @@ def validate_registration_data(username, nombre, apellido, email, password, rol,
 
 # Actualizar Usuario:
 # Paso1: Endpoint "/usuario": Retornar usuario con sus campos según el usuario
+
+
 @app.route("/usuario", methods=["GET"])
 @jwt_required()
 def get_private():
@@ -198,6 +203,8 @@ def get_private():
     return jsonify(user.serialize()), 200
 
 # Paso2: Endpoint "/usuario": Actualizar usuario
+
+
 @app.route('/admin/usuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
 def update_profile(usuario_id):
@@ -231,6 +238,8 @@ def update_profile(usuario_id):
         return jsonify({"msg": "Error al actualizar el perfil", "error": str(e)}), 500
 
 # Endpoint "/usuario/todos: Obtiene todos los usuarios"
+
+
 @app.route("/admin/usuarios", methods=["GET"])
 @jwt_required()
 def get_all_users():
@@ -245,6 +254,8 @@ def get_all_users():
     return jsonify({"users": [user.serialize() for user in users]}), 200
 
 # Eliminar Usuario:
+
+
 @app.route('/admin/usuario/<int:usuario_id>', methods=['DELETE'])
 @jwt_required()
 def delete_profile(usuario_id):
@@ -269,6 +280,8 @@ def delete_profile(usuario_id):
         return jsonify({"msg": "Error al eliminar el usuario", "error": str(e)}), 500
 
 # Rutas para perfil de usuario
+
+
 @app.route('/usuario/<int:usuario_id>', methods=['PUT'])
 @jwt_required()
 def update_user_profile(usuario_id):
@@ -300,6 +313,8 @@ def update_user_profile(usuario_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al actualizar el perfil", "error": str(e)}), 500
+
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
