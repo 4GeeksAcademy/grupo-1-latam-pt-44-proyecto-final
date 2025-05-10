@@ -1,87 +1,72 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useGlobalReducer from '../hooks/useGlobalReducer';
-import PeopleCard from "../components/PeopleCard.jsx";
 
-const category = "1"
+// Componente para las opciones de contenido
+const ContentOption = ({ icon, text, isSelected, onClick }) => {
+  return (
+    <div
+      className={`d-flex justify-content-between align-items-center p-3 mb-3 rounded-pill ${isSelected ? 'bg-dark border border-primary border-2' : 'bg-secondary bg-opacity-50'
+        }`}
+      style={{ cursor: 'pointer' }}
+      onClick={onClick}
+    >
+      <span className="text-light fs-5">{text}</span>
+      <span className="text-light fs-4">{icon}</span>
+    </div>
+  );
+};
 
 export const Categorias = ({ item }) => {
   const { dispatch, store } = useGlobalReducer();
   const navigate = useNavigate();
-
-  const getPeople = async () => {
-
-    try {
-      const response = await fetch('https://www.swapi.tech/api/people');
-
-      if (!response.ok) {
-        throw new Error("Ocurrió un error al llamar el endpoint 'people' ");
-      }
-
-      const data = await response.json();
-      console.log(data);
-      const urls = data.results.map((item) => item.url);
-      console.log(urls);
-
-      let ListaPersonajes = [];
-      for (let index = 0; index < urls.length; index++) {
-        const personaje = await getElementDetailById(urls[index], "Personaje");
-        ListaPersonajes = [...ListaPersonajes, personaje]
-      }
-
-      console.log("Imprimir ListaPersonajes:");
-      console.log(ListaPersonajes);
-
-      dispatch({ type: 'set_people_data', payload: ListaPersonajes })
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getElementDetailById = async (url, elemento) => {
-    try {
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error("Ocurrió un error al llamar el endpoint: " + elemento);
-      }
-
-      const data = await response.json();
-      return data.result;
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [selectedOption, setSelectedOption] = useState(0);
+  const token = sessionStorage.getItem('access_token');
+  const contentOptions = [
+    { text: "Historias para dormir", icon: "📚" },
+    { text: "Meditaciones", icon: "🧘" },
+    { text: "Música relajante", icon: "🎵" },
+    { text: "Sonidos de naturaleza", icon: "🍃" }
+  ];
 
   useEffect(() => {
-    const token = sessionStorage.getItem('access_token');
-
     if (!token) {
       navigate('/login');
       return;
     }
-    getPeople();
-  }, []);
-
+  }, [navigate, token]);
 
   return (
-    <div className="container mt-5">
-      <h2>Characters</h2>
-      <div className="row mt-5 justify-content-center">
-        <div className="d-flex flex-row overflow-auto"
-          style={{ maxWidth: "1200px", overflowX: "scroll" }}>
-          {store.people.map((item, index) => {
-            return (
-              <div className="mx-2" key={item.uid}>
-                <PeopleCard key={item.uid} item={item} />
-              </div>)
-          })}
-        </div>
-      </div>
-      <br></br>
-    </div>
-  )
-}
+    <div
+      className="container-fluid vh-100 d-flex flex-column align-items-center"
+      style={{
+        backgroundColor: '#0a1744',
+        backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
+        backgroundSize: '50px 50px',
+        justifyContent: 'flex-start',
+        paddingTop: '60px'
+      }}
+    >
+      {/* Estrella en la parte superior */}
+      <div className="text-light mb-4 fs-1">✨</div>
 
+      {/* Título principal */}
+      <h2 className="text-light text-center mb-4">
+        ¿Qué contenidos<br />prefieres para dormir?
+      </h2>
+
+      {/* Contenedor de opciones */}
+      <div className="container" style={{ maxWidth: '500px' }}>
+        {contentOptions.map((option, index) => (
+          <ContentOption
+            key={index}
+            text={option.text}
+            icon={option.icon}
+            isSelected={selectedOption === index}
+            onClick={() => navigate(`/categorias/${index + 1}`)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};

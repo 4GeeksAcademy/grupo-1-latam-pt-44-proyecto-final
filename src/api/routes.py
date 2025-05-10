@@ -102,6 +102,7 @@ def crear_historia():
     titulo = data.get('titulo')
     contenido = data.get('contenido')
     imagen = data.get('imagen')
+    url = data.get('url')
     duracion = data.get('duracion')
     categoria_id = data.get('categoria_id')
 
@@ -113,7 +114,7 @@ def crear_historia():
         return jsonify({"error": f"La categoría con id '{categoria_id}' no existe"}), 400
 
     nueva_historia = Historia(titulo=titulo, contenido=contenido,
-                              imagen=imagen, duracion=duracion, categoria_id=categoria_id)
+                              imagen=imagen, url=url, duracion=duracion, categoria_id=categoria_id)
     db.session.add(nueva_historia)
     db.session.commit()
     return jsonify(nueva_historia.serialize()), 201
@@ -131,6 +132,7 @@ def actualizar_historia(historia_id):
     titulo = data.get('titulo')
     contenido = data.get('contenido')
     imagen = data.get('imagen')
+    url = data.get('url')
     duracion = data.get('duracion')
     categoria_id = data.get('categoria_id')
 
@@ -140,6 +142,8 @@ def actualizar_historia(historia_id):
         historia.contenido = contenido
     if imagen is not None:
         historia.imagen = imagen
+    if url is not None:
+        historia.url = url
     if duracion is not None:
         historia.duracion = duracion
     if categoria_id:
