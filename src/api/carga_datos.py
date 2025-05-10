@@ -3,111 +3,61 @@ import json
 import urllib3
 import os
 
-# Deshabilitar advertencias de SSL (solo para desarrollo)
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Configuración base
-ssl_verification = False  # Cambia a True en producción si tienes certificados válidos
 base_url = os.getenv("VITE_BACKEND_URL")
 headers_json = {'Content-Type': 'application/json'}
-
-# Función para realizar solicitudes POST a la API
-
+ssl_verification = False
 
 def post_api_request(endpoint, payload):
-    """Realiza una solicitud POST a la API con el payload proporcionado."""
     url = f"{base_url}{endpoint}"
     try:
-        response = requests.post(url, headers=headers_json, data=json.dumps(
-            payload), verify=ssl_verification)
-        # Lanza una excepción para códigos de error HTTP (4xx o 5xx)
+        response = requests.post(url, headers=headers_json, data=json.dumps(payload), verify=ssl_verification)
         response.raise_for_status()
-        return response.json()  # Intenta parsear la respuesta JSON
+        return response.json()
     except requests.exceptions.RequestException as e:
-        print(f"Error al realizar la solicitud: {e}")
-        print(
-            f"Respuesta del servidor: {response.status_code} - {response.text}")
+        print(f"Error: {e}")
         return None
-    except json.JSONDecodeError:
-        print(
-            f"Error al decodificar la respuesta JSON de {url}: {response.text}")
-        return response.text  # Devuelve el texto si no se puede parsear como JSON
 
+def run_seed():
+    results = []
 
-# Registro de usuario
-register_endpoint = "/register"
-user_data = [
-    {
-        "username": "annya",
-        "nombre": "Any",
-        "apellido": "Mendez",
-        "email": "any@mendez.com",
-        "password": "123456",
-        "is_active": True
-    },
-    {
-        "username": "leo",
-        "nombre": "Leonardo",
-        "apellido": "Rospigliosi",
-        "email": "leo@rospligosi.com",
-        "password": "123456",
-        "is_active": True
-    },
-    {
-        "username": "pedro",
-        "nombre": "Pedro",
-        "apellido": "Aguilar",
-        "email": "pedro@aguilar.com",
-        "password": "123456",
-        "is_active": True
-    }
-]
+    users = [
+        {"username": "annya", "nombre": "Any", "apellido": "Mendez", "email": "any@mendez.com", "password": "123456", "is_active": True},
+        {"username": "leo", "nombre": "Leonardo", "apellido": "Rospigliosi", "email": "leo@rospligosi.com", "password": "123456", "is_active": True},
+        {"username": "pedro", "nombre": "Pedro", "apellido": "Aguilar", "email": "pedro@aguilar.com", "password": "123456", "is_active": True},
+        {"username": "admin", "nombre": "admin", "apellido": "admin", "email": "admin@example.com", "password": "123456", "is_active": True, "rol": "ADMIN"}
+    ]
 
-print("Registrando usuarios...")
-for user in user_data:
-    print(f"Registrando usuario: {user['username']}")
-    user_response = post_api_request(register_endpoint, user)
-    if user_response:
-        print("Respuesta:", user_response)
-    else:
-        print("Falló el registro de este usuario.")
-    print("-" * 60)
+    for u in users:
+        result = post_api_request("/register", u)
+        results.append({"type": "user", "data": u["username"], "result": result})
 
-# Creación de categorías
-categories_endpoint = "/api/categorias"
-categories_to_create = [
-    {
-        "nombre": "Historias para dormir",
-        "descripcion": "Déjate llevar por narraciones suaves y envolventes diseñadas para calmar tu mente y prepararte para un descanso profundo."
-    },
-    {
-        "nombre": "Meditaciones",
-        "descripcion": "Encuentra la paz interior y reduce el estrés con nuestras sesiones de meditación guiada, perfectas para relajar tu cuerpo y mente antes de dormir."
-    },
-    {
-        "nombre": "Sonidos relajantes",
-        "descripcion": "Disfruta de una variedad de sonidos armónicos y melodías suaves creadas específicamente para inducir la relajación y facilitar un sueño tranquilo."
-    },
-    {
-        "nombre": "Sonidos de la naturaleza",
-        "descripcion": "Sumérgete en la tranquilidad de la naturaleza con paisajes sonoros relajantes como la lluvia suave, el canto de los pájaros y el susurro del mar."
-    }
-]
+    categories = [
+        {
+            "nombre": "Historias para dormir",
+            "descripcion": "Déjate llevar por narraciones suaves y envolventes diseñadas para calmar tu mente y prepararte para un descanso profundo."
+        },
+        {
+            "nombre": "Meditaciones",
+            "descripcion": "Encuentra la paz interior y reduce el estrés con nuestras sesiones de meditación guiada, perfectas para relajar tu cuerpo y mente antes de dormir."
+        },
+        {
+            "nombre": "Sonidos relajantes",
+            "descripcion": "Disfruta de una variedad de sonidos armónicos y melodías suaves creadas específicamente para inducir la relajación y facilitar un sueño tranquilo."
+        },
+        {
+            "nombre": "Sonidos de la naturaleza",
+            "descripcion": "Sumérgete en la tranquilidad de la naturaleza con paisajes sonoros relajantes como la lluvia suave, el canto de los pájaros y el susurro del mar."
+        }
+    ]
 
-print("Creando categorías...")
-for category_data in categories_to_create:
-    print(f"Creando categoría: {category_data['nombre']}")
-    category_response = post_api_request(categories_endpoint, category_data)
-    if category_response:
-        print("Respuesta:", category_response)
-    else:
-        print("Falló la creación de esta categoría.")
-    print("-" * 60)
+    for c in categories:
+        result = post_api_request("/api/categorias", c)
+        results.append({"type": "categoria", "data": c["nombre"], "result": result})
 
-# Creación de historias
-histories_endpoint = "/api/historias"
-histories_to_create = [
-    {
+    historias = [
+{
         "titulo": "Los sueños del Faraón",
         "contenido": "La historia de los sueños del Faraón egipcio, narrada en el libro de Génesis de la Biblia, cuenta cómo José, un joven hebreo, interpreta dos sueños del Faraón que predecían siete años de abundancia seguidos de siete años de hambruna. Estos sueños, que inicialmente nadie podía descifrar, revelaban un mensaje divino sobre el futuro de Egipto.\n El contenido de los sueños:\n 1. Primer sueño:\n El Faraón soñó que estaba junto al río Nilo y vio siete vacas gordas y hermosas que salían del río y pastaban en el prado. Luego vio otras siete vacas flacas y raquíticas que las seguían, y las vacas flacas se las comieron. \n 2. Segundo sueño:\n El Faraón volvió a soñar que vio siete espigas de grano llenas y hermosas, y luego siete espigas menudas y quemadas por el viento del este, que se las comieron. \n La interpretación de José:\n José, gracias a su capacidad de interpretar los sueños, explicó al Faraón que los dos sueños significaban lo mismo: siete años de gran cosecha en Egipto, seguidos de siete años de hambruna, donde la comida sería escasa. \n El significado y la importancia de los sueños:\n Predicción divina:\n Los sueños del Faraón no eran meras coincidencias, sino que eran mensajes divinos que revelaban el futuro. \n Advertencia:\n La interpretación de José sirvió de advertencia para que el Faraón tomara medidas para almacenar granos durante los años de abundancia, con el fin de prepararse para la hambruna que vendría después. \n El poder de la interpretación:\n La capacidad de José para interpretar los sueños demostró su sabiduría y su conexión con lo divino, lo que lo llevó a ser nombrado gobernador de Egipto. \n El papel de Dios:\n La historia de los sueños del Faraón destaca el papel de Dios en la vida de las personas y en la historia de la humanidad, revelando Su providencia y Su cuidado por los seres humanos.",
         "imagen": "los_sueños_del_faraon_bbdvw3",
@@ -203,14 +153,10 @@ histories_to_create = [
         "duracion": 5,
         "categoria_id": "4"
     }
-]
+    ]
 
-print("Creando historias...")
-for history_data in histories_to_create:
-    print(f"Creando historia: {history_data['titulo']}")
-    history_response = post_api_request(histories_endpoint, history_data)
-    if history_response:
-        print("Respuesta:", history_response)
-    else:
-        print("Falló la creación de esta historia.")
-    print("-" * 60)
+    for h in historias:
+        result = post_api_request("/api/historias", h)
+        results.append({"type": "historia", "data": h["titulo"], "result": result})
+
+    return results
