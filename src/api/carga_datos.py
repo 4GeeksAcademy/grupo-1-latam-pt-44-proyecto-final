@@ -34,12 +34,12 @@ def run_seed():
 
     # USERS
     users = [
-        {"username": "annya", "nombre": "Any", "apellido": "Mendez", "email": "any@mendez.com",
-            "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
-        {"username": "leo", "nombre": "Leonardo", "apellido": "Rospigliosi",
-            "email": "leo@rospligosi.com", "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
-        {"username": "pedro", "nombre": "Pedro", "apellido": "Aguilar", "email": "pedro@aguilar.com",
-            "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
+        # {"username": "annya", "nombre": "Any", "apellido": "Mendez", "email": "any@mendez.com",
+        #     "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
+        # {"username": "leo", "nombre": "Leonardo", "apellido": "Rospigliosi",
+        #     "email": "leo@rospligosi.com", "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
+        # {"username": "pedro", "nombre": "Pedro", "apellido": "Aguilar", "email": "pedro@aguilar.com",
+        #     "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
         {"username": "admin", "nombre": "admin", "apellido": "admin", "email": "admin@example.com",
             "password": os.getenv("SECURE_ADMIN_PASSWORD"), "is_active": True, "rol": os.getenv("USER_ROLE")}
     ]
@@ -67,8 +67,8 @@ def run_seed():
         }
     ]
 
-    for c in categories:
-        safe_post("/api/categorias", c, "categoria", c["nombre"])
+    # for c in categories:
+    #     safe_post("/api/categorias", c, "categoria", c["nombre"])
 
     # HISTORIAS (asume que ya tienes la lista completa)
     historias = [{
