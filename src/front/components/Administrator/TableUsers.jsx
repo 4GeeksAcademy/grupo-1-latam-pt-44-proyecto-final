@@ -75,9 +75,9 @@ export const TableUsers = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const { id, email, username, nombre, apellido, activo, password } = editingUser;
+      const { id, email, username, nombre, apellido, activo, password, rol} = editingUser;
 
-      const payload = { email, username, nombre, apellido, activo };
+      const payload = { email, username, nombre, apellido, activo, rol };
       if (password) payload.password = password;
 
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/admin/usuario/${id}`, {

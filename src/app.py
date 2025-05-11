@@ -226,6 +226,7 @@ def update_profile(usuario_id):
         user.username = data.get("username", user.username)
         user.nombre = data.get("nombre", user.nombre)
         user.apellido = data.get("apellido", user.apellido)
+        user.role = data.get("rol", user.role)
 
         if "password" in data and data["password"]:
             user.password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
