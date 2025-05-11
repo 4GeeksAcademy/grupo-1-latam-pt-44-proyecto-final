@@ -228,7 +228,7 @@ def update_profile(usuario_id):
         user.apellido = data.get("apellido", user.apellido)
 
         if "password" in data and data["password"]:
-            user.password = bcrypt.generate_password_hash(data["password"])
+            user.password = bcrypt.generate_password_hash(data["password"]).decode('utf-8')
 
         db.session.commit()
         return jsonify({"message": "Perfil actualizado"}), 200
