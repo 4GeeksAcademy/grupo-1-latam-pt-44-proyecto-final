@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Cloudinary } from "@cloudinary/url-gen";
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 export const HistoriaPlayer = () => {
     const { id } = useParams();
+    const { store, dispatch } = useGlobalReducer();
+
     const navigate = useNavigate();
     const [historia, setHistoria] = useState(null);
+    const [message, setMessage] = useState({ type: '', text: '' });
+
     const [loading, setLoading] = useState(true);
     const [isPlaying, setIsPlaying] = useState(false);
     const [volume, setVolume] = useState(1);
@@ -14,6 +19,45 @@ export const HistoriaPlayer = () => {
     const playerRef = useRef(null);
     const progressIntervalRef = useRef(null);
     const cld = new Cloudinary({ cloud: { cloudName: 'dz71k8oei' } });
+
+
+    const showMessage = (type, text, duration = 4000) => {
+        setMessage({ type, text });
+        setTimeout(() => setMessage({ type: '', text: '' }), duration);
+    };
+
+
+
+
+    const handleFavorite = async (historiaId) => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/favoritos/historias/${historiaId}`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem("access_token")}`
+                },
+                body: JSON.stringify([])
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 409) {
+                    showMessage("danger", "La Historia ya se encuentra en favoritos")
+                } else {
+                    showMessage("info", data.mensaje || `Error inesperado${response.status}`);
+                }
+                return;
+            }
+
+            dispatch({ type: "add_to_favorite", payload: { historia_id: historiaId, nombre_historia: data.favorito.nombre_historia } })
+            showMessage("success", data.mensaje || `Historia se añadió a favoritos`);
+
+        } catch (error) {
+            console.error('Error al cargar la historia:', error);
+            showMessage("info", "No se pudo procesar la solicitud. Intenta más tarde.");
+        }
+    }
 
     const fetchHistoria = useCallback(async (historiaId) => {
         try {
@@ -179,6 +223,13 @@ export const HistoriaPlayer = () => {
                 />
             </div>
 
+            {message.text && (
+                <div className={`alert alert-${message.type} mb-4 rounded-3`}>
+                    <i className="fa-solid fa-circle-exclamation me-2"></i>
+                    {message.text}
+                </div>
+            )}
+
             <div className="position-relative z-1 d-flex flex-column align-items-center w-100 px-3" style={{ maxWidth: '800px' }}>
                 <h1 className="text-white display-5 fw-bold text-center mb-3" style={{ textShadow: '0 2px 8px #000' }}>
                     {historia.titulo}
@@ -276,6 +327,10 @@ export const HistoriaPlayer = () => {
                     <button className="btn btn-primary" onClick={handleGoBack}>
                         Volver
                     </button>
+                    <button className="btn btn-primary" onClick={() => { handleFavorite(id) }}>
+                        <i className={store.favorites.some(f => f.historia_id === id) ? "fa-solid fa-heart" : "fa-regular fa-heart"}></i>
+                    </button>
+
                 </div>
             </div>
         </div>

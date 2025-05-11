@@ -35,33 +35,32 @@ export default function storeReducer(store, action = {}) {
         ),
       };
 
-    case "set_people_data":
-      const dataPeople = action.payload;
-      return { ...store, people: [...dataPeople] };
+    case "set_favorites":
+      const { datafavorites } = action.payload;
+      console.log(datafavorites);
+      return { ...store, favorites: [...datafavorites] };
 
     case "add_to_favorite":
-      const { uid, name, category, linkto } = action.payload;
-      console.log("Leo ]]]]] add_to_favorite: category");
-      console.log(action.payload);
+      const { historia_id, nombre_historia } = action.payload;
+
       return {
         ...store,
         favorites: store.favorites.some(
-          (item) => item.uid === uid && item.category === category
+          (item) => item.historia_id === historia_id
         )
           ? store.favorites
           : [
               ...store.favorites,
-              { uid: uid, name: name, category: category, linkto: linkto },
+              { historia_id: historia_id, nombre_historia: nombre_historia },
             ],
       };
 
     case "delete_from_favorite":
-      const { uid: deleteUid, category: deletecategory } = action.payload;
+      const { historia_id: deleteHistoriaId } = action.payload;
       return {
         ...store,
         favorites: store.favorites.filter(
-          (item) =>
-            !(item.uid === deleteUid && item.category === deletecategory)
+          (item) => item.historia_id != deleteHistoriaId
         ),
       };
 

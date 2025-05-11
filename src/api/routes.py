@@ -5,7 +5,8 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Categoria, Historia, Favorito
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-
+from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy import select
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
@@ -22,6 +23,8 @@ def handle_hello():
     return jsonify(response_body), 200
 
 # POST: Crear categoría
+
+
 @api.route('/categorias', methods=['POST'])
 def crear_categoria():
     data = request.get_json()
@@ -201,50 +204,77 @@ def obtener_FavoritosHistorias_usuario(user_id):
 
 
 # POST: Guardar una historia como favorita de un usuario
-@api.route('/favoritos/historias/<int:user_id>', methods=['POST'])
-def agregar_favorito(user_id):
-    data = request.get_json()
-    historia_id = data.get('historia_id')
+@api.route('/favoritos/historias/<int:historia_id>', methods=['POST'])
+@jwt_required()
+def agregar_favorito(historia_id):
+    try:
+        user_id = get_jwt_identity()
 
-    if not historia_id:
-        return jsonify({"error": "Falta el campo 'historia_id' en la solicitud."}), 400
+        if not historia_id:
+            return jsonify({"error": "Falta el campo 'historia_id' en la solicitud."}), 400
 
-    # Verificar si el usuario existe
-    usuario = db.session.get(User, user_id)
-    if not usuario:
-        return jsonify({"error": f"Usuario con ID {user_id} no encontrado."}), 404
+        # Verificar si el usuario existe
+        usuario = db.session.get(User, user_id)
+        if not usuario:
+            return jsonify({"error": f"Usuario con ID {user_id} no encontrado."}), 404
 
-    # Verificar si la historia existe
-    historia = db.session.get(Historia, historia_id)
-    if not historia:
-        return jsonify({"error": f"Historia con ID {historia_id} no encontrada."}), 404
+        # Verificar si la historia existe
+        historia = db.session.get(Historia, historia_id)
+        if not historia:
+            return jsonify({"error": f"Historia con ID {historia_id} no encontrada."}), 404
 
-    # Verificar si ya es favorito (opcional, para evitar duplicados)
-    favorito_existente = Favorito.query.filter_by(
-        user_id=user_id, historia_id=historia_id).first()
-    if favorito_existente:
-        return jsonify({"info": "La historia ya está en los favoritos del usuario."}), 409
+        # Verificar si ya es favorito (opcional, para evitar duplicados)
+        favorito_existente = Favorito.query.filter_by(
+            user_id=user_id, historia_id=historia_id).first()
+        if favorito_existente:
+            return jsonify({"info": "La historia ya está en los favoritos del usuario."}), 409
 
-    # Crear y guardar el favorito
-    nuevo_favorito = Favorito(user_id=user_id, historia_id=historia_id)
-    db.session.add(nuevo_favorito)
-    db.session.commit()
+        # Crear y guardar el favorito
+        nuevo_favorito = Favorito(
+            user_id=user_id, historia_id=historia_id, nombre_historia=historia.titulo)
+        db.session.add(nuevo_favorito)
+        db.session.commit()
 
-    return jsonify({"mensaje": "Historia agregada a favoritos exitosamente."}), 201
+        return jsonify({"mensaje": "Historia agregada a favoritos exitosamente.", "favorito": nuevo_favorito.serialize()}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"mensaje": "No se pudo agregar a favoritos.,", "error": str(e)}), 500
+
+
+@api.route('/usuarios/favoritos', methods=['GET'])
+@jwt_required()
+def obtener_favoritos_usuario():
+    try:
+        user_id = get_jwt_identity()
+
+        # Verificar si el usuario existe
+        usuario = db.session.get(User, user_id)
+        if not usuario:
+            return jsonify({"error": f"Usuario con ID {user_id} no encontrado."}), 404
+
+        favoritos = [favorite.serialize() for favorite in usuario.favoritos]
+
+        return jsonify({"favoritos": favoritos}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"mensaje": "No se pudo agregar a favoritos.,", "error": str(e)}), 500
 
 
 # DELETE: Eliminar una historia de los favoritos de un usuario
-@api.route('/favoritos/historias/<int:historia_id>/<int:user_id>', methods=['DELETE'])
-def eliminar_favorito(user_id, historia_id):
-    # Buscar el favorito
-    favorito = Favorito.query.filter_by(
-        user_id=user_id, historia_id=historia_id).first()
 
-    if not favorito:
+@api.route('/usuarios/favoritos/<int:historia_id>', methods=['DELETE'])
+@jwt_required()
+def eliminar_favorito(historia_id):
+    user_id = get_jwt_identity()
+    stmt = select(Favorito).where(Favorito.user_id == user_id,
+                                  Favorito.historia_id == historia_id)
+    result = db.session.execute(stmt).scalar_one_or_none()
+
+    if result is None:
         return jsonify({"error": "Favorito no encontrado."}), 404
 
     # Eliminar el favorito
-    db.session.delete(favorito)
+    db.session.delete(result)
     db.session.commit()
 
     return jsonify({"mensaje": "Favorito eliminado exitosamente."}), 200

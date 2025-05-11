@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DormireLogo from "../assets/img/sheep_logo.svg";
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 export const Login = () => {
     const [email, setemail] = useState('');
@@ -10,6 +11,33 @@ export const Login = () => {
     const [infoData, setInfoData] = useState();
 
     const navigate = useNavigate();
+    const { store, dispatch } = useGlobalReducer();
+
+    const getUserFavorites = async () => {
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/usuarios/favoritos`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${sessionStorage.getItem("access_token")}`
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                dispatch({ type: "set_favorites", payload: { datafavorites: data.favoritos } })
+            } else {
+                if (data.error) {
+                    setErrorMessage(data.error);
+                } else {
+                    setErrorMessage('Error al iniciar sesión.');
+                }
+            }
+        } catch (error) {
+            console.error('Error al comunicarse con el backend:', error);
+            setErrorMessage('Error al comunicarse con el servidor.');
+        }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -33,6 +61,7 @@ export const Login = () => {
             if (response.ok) {
                 sessionStorage.setItem("access_token", data.access_token)
                 setInfoData(data)
+                getUserFavorites()
                 if (data.rol === 'ADMIN') {
                     navigate('/administrator');
                 } else {
