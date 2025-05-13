@@ -74,7 +74,11 @@ def generate_verification_token(user_id):
 
 def send_verification_email(user_email, user_id, user_name):
     token = generate_verification_token(user_id)
-    verification_url = f"{os.getenv("FRONTEND_URL")}/verify-email?token={token}"
+    frontend_url = os.getenv("FRONTEND_URL", "").strip('"').strip("'")
+    if not frontend_url:
+        raise RuntimeError("La variable FRONTEND_URL no está definida")
+
+    verification_url = f"{frontend_url}/verify-email?token={token}"
     current_date= date.today()
     current_year=current_date.year
     html_body = render_template(
