@@ -187,7 +187,7 @@ def register():
     # Crea nuevo usuario
     try:
         new_user = User(username=username, nombre=nombre,
-                        apellido=apellido, email=email, password=hashed_password, role=rol, is_active=is_active)
+                        apellido=apellido, email=email, password=hashed_password, role=rol)
         db.session.add(new_user)
         db.session.commit()
         email_sent=send_verification_email(new_user.email, new_user.id, new_user.nombre)
