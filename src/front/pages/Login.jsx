@@ -70,11 +70,13 @@ export const Login = () => {
 
                 //window.location.reload();
             } else {
-                if (data.error) {
-                    setErrorMessage(data.error);
-                } else {
-                    setErrorMessage('Error al iniciar sesión.');
-                }
+if (data.error) {
+    setErrorMessage(data.error);
+} else if (data.msg) {
+    setErrorMessage(data.msg);
+} else {
+    setErrorMessage('Error al iniciar sesión.');
+}
             }
         } catch (error) {
             console.error('Error al comunicarse con el backend:', error);
@@ -210,6 +212,9 @@ export const Login = () => {
                 <div className="text-center mb-5">
                     <Link to="/register" className="text-white text-decoration-underline">
                         Registrarse
+                    </Link>
+                    <Link to="/forgot-password" className="text-white text-decoration-underline ms-2">
+                        Recuperar contraseña
                     </Link>
                 </div>
 

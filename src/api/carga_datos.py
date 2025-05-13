@@ -31,12 +31,12 @@ def run_seed():
         result = post_api_request(endpoint, payload)
         results.append({"type": tipo, "data": identificador, "result": result})
         print(result)
-        time.sleep(4)  # Esperar 4 SEGUNDOS antes de la siguiente petición
+        # time.sleep(4)  # Esperar 4 SEGUNDOS antes de la siguiente petición
 
     # USERS
     users = [
-        {"username": "annya", "nombre": "Any", "apellido": "Mendez", "email": "any@mendez.com",
-            "password": "123456", "is_active": True},
+        {"username": "annya", "nombre": "Any", "apellido": "Mendez", "email": "anymen331@gmail.com",
+            "password": "123456", "is_active": False},
         {"username": "leo", "nombre": "Leonardo", "apellido": "Rospigliosi",
             "email": "leo@rospligosi.com", "password": "123456", "is_active": True},
         {"username": "pedro", "nombre": "Pedro", "apellido": "Aguilar", "email": "pedro@aguilar.com",

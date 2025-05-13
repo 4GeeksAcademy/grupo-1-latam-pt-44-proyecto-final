@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifica tu cuenta de Dormiré</title>
+    <title>Restablece tu contraseña de Dormiré</title>
     <style>
         /* Estilos generales */
         body {
@@ -27,15 +27,18 @@
         
         /* Encabezado */
         .header {
-            background: linear-gradient(180deg, #026EEC 0%, #051B47 100%);
+            background: linear-gradient(135deg, #2563EB 0%, #0A1744 100%);
             padding: 30px 20px;
             text-align: center;
+            position: relative;
         }
         
         .logo {
             width: 120px;
             height: auto;
             margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
         }
         
         .header h1 {
@@ -43,6 +46,59 @@
             margin: 0;
             font-size: 24px;
             font-weight: normal;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* Estrellas decorativas */
+        .star {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 16px;
+        }
+        
+        .star-1 {
+            top: 20%;
+            left: 10%;
+        }
+        
+        .star-2 {
+            top: 30%;
+            right: 15%;
+        }
+        
+        .star-3 {
+            bottom: 25%;
+            left: 20%;
+        }
+        
+        .star-4 {
+            bottom: 30%;
+            right: 10%;
+        }
+        
+        /* Puntos decorativos */
+        .dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4ADE80;
+        }
+        
+        .dot-1 {
+            top: 25%;
+            right: 25%;
+        }
+        
+        .dot-2 {
+            bottom: 30%;
+            left: 25%;
+        }
+        
+        .dot-3 {
+            top: 40%;
+            left: 15%;
         }
         
         /* Contenido */
@@ -52,10 +108,10 @@
         }
         
         .content h2 {
-            color: #051B47;
+            color: #0A1744;
             margin-top: 0;
             margin-bottom: 20px;
-            font-size: 20px;
+            font-size: 22px;
         }
         
         .content p {
@@ -67,8 +123,8 @@
         /* Botón */
         .button {
             display: inline-block;
-            background-color: #026EEC;
-            color: #ffffff;
+            background-color: #4ADE80;
+            color: #0F172A;
             text-decoration: none;
             padding: 12px 30px;
             border-radius: 50px;
@@ -78,19 +134,21 @@
         }
         
         .button:hover {
-            background-color: #0258B8;
+            background-color: #22C55E;
         }
         
-        /* Código de verificación */
-        .verification-code {
-            background-color: #f0f5ff;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-family: monospace;
-            font-size: 18px;
-            letter-spacing: 2px;
-            color: #051B47;
+        /* Luna decorativa */
+        .moon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #F59E0B;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+            transform: rotate(230deg);
+            position: absolute;
+            bottom: -15px;
+            right: 30%;
         }
         
         /* Información adicional */
@@ -104,7 +162,7 @@
         
         /* Pie de página */
         .footer {
-            background-color: #051B47;
+            background-color: #0A1744;
             padding: 20px;
             text-align: center;
             color: #ffffff;
@@ -123,16 +181,6 @@
             color: #ffffff;
             margin: 0 10px;
             text-decoration: none;
-        }
-        
-        /* Estrellas decorativas */
-        .star {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            background-color: rgba(255, 255, 255, 0.3);
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            margin: 0 5px;
         }
         
         /* Responsividad */
@@ -156,30 +204,45 @@
 <body>
     <div class="container">
         <div class="header">
+            <!-- Estrellas decorativas -->
+            <div class="star star-1">✦</div>
+            <div class="star star-2">✦</div>
+            <div class="star star-3">✦</div>
+            <div class="star star-4">✦</div>
+            
+            <!-- Puntos decorativos -->
+            <div class="dot dot-1"></div>
+            <div class="dot dot-2"></div>
+            <div class="dot dot-3"></div>
+            
             <img src="https://i.ibb.co/b5sLkxLM/sheep-color-icon.png" alt="Dormiré" class="logo">
             <h1>Dormiré</h1>
         </div>
         
         <div class="content">
-            <h2>¡Hola {{ user_name }}!</h2>
-            <p>Gracias por registrarte en Dormiré. Para completar tu registro y comenzar a disfrutar de nuestro contenido para dormir mejor, por favor verifica tu dirección de correo electrónico.</p>
+            <h2>Restablecimiento de Contraseña</h2>
+            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en Dormiré. Si no has solicitado este cambio, puedes ignorar este correo electrónico.</p>
             
-            <a href="{{ verification_url }}" class="button">Verificar mi cuenta</a>
+            <div style="position: relative; display: inline-block;">
+                <a href="{{ reset_url }}" class="button">Restablecer mi contraseña</a>
+                <div class="moon"></div>
+            </div>
+            
+            <p>Este enlace expirará en 24 horas por razones de seguridad.</p>
             
             <p>Si el botón no funciona, puedes copiar y pegar el siguiente enlace en tu navegador:</p>
             <p style="word-break: break-all; font-size: 14px; color: #777777;">
-                {{ verification_url }}
+                {{ reset_url }}
             </p>
-            
-            <p>Este enlace y código expirarán en 24 horas.</p>
         </div>
         
         <div class="info">
-            <p>Si no solicitaste esta verificación, puedes ignorar este correo electrónico o contactarnos si tienes alguna pregunta.</p>
+            <p>Por razones de seguridad, este enlace solo puede utilizarse una vez. Si necesitas restablecer tu contraseña nuevamente, visita <a href="https://dormire.com/forgot-password" style="color: #2563EB;">dormire.com/forgot-password</a> y solicita un nuevo enlace.</p>
+            <p>Si no solicitaste este restablecimiento, te recomendamos revisar la seguridad de tu cuenta o contactar con nuestro equipo de soporte.</p>
         </div>
         
         <div class="footer">
-            <p>© {{ current_year }} Dormiré. Todos los derechos reservados.</p>
+            <p>© 2025 Dormiré. Todos los derechos reservados.</p>
             <div class="social-links">
                 <a href="#">Facebook</a> | 
                 <a href="#">Instagram</a> | 
