@@ -17,20 +17,20 @@ const ForgotPassword = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
+
         // Validar formato de email
         if (!validateEmail(email)) {
             setErrorMessage('Por favor, ingresa un correo electrónico válido');
             return;
         }
-        
+
         setIsLoading(true);
         setErrorMessage('');
         setSuccessMessage('');
-        
+
         try {
             const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
-            
+
             // Enviar como objeto JSON con el header Content-Type adecuado
             const response = await fetch(`${backendUrl}/forgot-password`, {
                 method: 'POST',
@@ -39,9 +39,9 @@ const ForgotPassword = () => {
                 },
                 body: JSON.stringify({ email })
             });
-            
+
             const data = await response.json();
-            
+
             if (response.ok) {
                 setSuccessMessage(data.msg || 'Se ha enviado un enlace de recuperación a tu correo electrónico');
                 setIsSubmitted(true);
@@ -108,10 +108,10 @@ const ForgotPassword = () => {
                             {/* Logo */}
                             <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
                                 style={{ width: '120px', height: '120px', backgroundColor: '#1E3A8A', position: 'relative' }}>
-                                <img 
-                                    src="https://i.ibb.co/b5sLkxLM/sheep-color-icon.png" 
-                                    alt="Dormiré Logo" 
-                                    style={{ width: '80%', height: '80%' }} 
+                                <img
+                                    src="https://i.imgur.com/RIrjVgm.png"
+                                    alt="Dormiré Logo"
+                                    style={{ width: '80%', height: '80%' }}
                                 />
 
                                 {/* Estrellas alrededor del logo */}
@@ -135,7 +135,7 @@ const ForgotPassword = () => {
                                 // Mensaje de éxito después de enviar
                                 <div className="text-center">
                                     <div className="d-flex justify-content-center mb-4">
-                                        <div className="rounded-circle bg-success d-flex align-items-center justify-content-center" 
+                                        <div className="rounded-circle bg-success d-flex align-items-center justify-content-center"
                                             style={{ width: '80px', height: '80px' }}>
                                             <CheckCircle size={50} className="text-white" />
                                         </div>
@@ -146,7 +146,7 @@ const ForgotPassword = () => {
                                         Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.
                                     </p>
                                     <div className="d-flex flex-column gap-3">
-                                        <Link 
+                                        <Link
                                             to="/login"
                                             className="btn py-3 px-5 mx-auto"
                                             style={{

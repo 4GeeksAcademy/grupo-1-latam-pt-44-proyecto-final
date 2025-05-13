@@ -101,26 +101,26 @@ export const VerifyEmail = () => {
       }}
     >
       {renderStars()}
-      
-      <div className="text-center p-5 rounded-4 shadow-lg" 
-        style={{ 
-          maxWidth: "500px", 
+
+      <div className="text-center p-5 rounded-4 shadow-lg"
+        style={{
+          maxWidth: "500px",
           width: "90%",
           backgroundColor: "rgba(3, 69, 140, 0.3)",
           backdropFilter: "blur(10px)",
           border: "1px solid rgba(255, 255, 255, 0.1)"
         }}>
-        
+
         <div className="mb-4 text-center">
-          <img 
-            src="https://i.ibb.co/b5sLkxLM/sheep-color-icon.png" 
-            alt="Dormiré Logo" 
-            style={{ height: "100px" }} 
+          <img
+            src="https://i.imgur.com/RIrjVgm.png"
+            alt="Dormiré Logo"
+            style={{ height: "100px" }}
             className="mb-3"
           />
           <h2 className="text-white mb-0">Dormiré</h2>
         </div>
-        
+
         {verificationState.loading ? (
           // Estado de carga
           <div className="mb-4">
@@ -134,7 +134,7 @@ export const VerifyEmail = () => {
           // Estado de éxito
           <div className="mb-4">
             <div className="d-flex justify-content-center mb-4">
-              <div className="rounded-circle bg-success d-flex align-items-center justify-content-center" 
+              <div className="rounded-circle bg-success d-flex align-items-center justify-content-center"
                 style={{ width: "80px", height: "80px" }}>
                 <CheckCircle size={50} className="text-white" />
               </div>
@@ -142,12 +142,12 @@ export const VerifyEmail = () => {
             <h3 className="mb-3 text-white">¡Su cuenta ha sido verificada!</h3>
             <p className="mb-4 text-white opacity-75">Ya puede iniciar sesión con sus credenciales</p>
 
-            <button 
-              className="btn px-4 py-2 rounded-pill" 
+            <button
+              className="btn px-4 py-2 rounded-pill"
               onClick={() => navigate("/login")}
-              style={{ 
-                backgroundColor: "#27F0A8", 
-                color: "#051B47", 
+              style={{
+                backgroundColor: "#27F0A8",
+                color: "#051B47",
                 fontWeight: "bold",
                 border: "none"
               }}
@@ -159,7 +159,7 @@ export const VerifyEmail = () => {
           // Estado de error
           <div className="mb-4">
             <div className="d-flex justify-content-center mb-4">
-              <div className="rounded-circle bg-danger d-flex align-items-center justify-content-center" 
+              <div className="rounded-circle bg-danger d-flex align-items-center justify-content-center"
                 style={{ width: "80px", height: "80px" }}>
                 <XCircle size={50} className="text-white" />
               </div>
@@ -168,24 +168,24 @@ export const VerifyEmail = () => {
             <p className="text-white opacity-75 mb-4">{verificationState.error}</p>
 
             <div className="d-flex flex-column gap-3">
-              <button 
-                className="btn px-4 py-2 rounded-pill" 
+              <button
+                className="btn px-4 py-2 rounded-pill"
                 onClick={() => navigate("/login")}
-                style={{ 
-                  backgroundColor: "#27F0A8", 
-                  color: "#051B47", 
+                style={{
+                  backgroundColor: "#27F0A8",
+                  color: "#051B47",
                   fontWeight: "bold",
                   border: "none"
                 }}
               >
                 Iniciar sesión
               </button>
-              <button 
-                className="btn px-4 py-2 rounded-pill" 
+              <button
+                className="btn px-4 py-2 rounded-pill"
                 onClick={() => navigate("/")}
-                style={{ 
-                  backgroundColor: "transparent", 
-                  color: "white", 
+                style={{
+                  backgroundColor: "transparent",
+                  color: "white",
                   fontWeight: "bold",
                   border: "2px solid white"
                 }}

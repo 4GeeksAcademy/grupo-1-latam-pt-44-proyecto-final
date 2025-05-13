@@ -20,7 +20,7 @@ const ResetPassword = () => {
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const urlToken = queryParams.get('token');
-        
+
         if (!urlToken) {
             setIsTokenValid(false);
             setErrorMessage('No se encontró el token de restablecimiento en la URL');
@@ -32,23 +32,23 @@ const ResetPassword = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
+
         // Validar que las contraseñas coincidan
         if (password !== confirmPassword) {
             setErrorMessage('Las contraseñas no coinciden');
             return;
         }
-        
+
         // Validar longitud mínima de contraseña
         if (password.length < 8) {
             setErrorMessage('La contraseña debe tener al menos 8 caracteres');
             return;
         }
-        
+
         setIsLoading(true);
         setErrorMessage('');
         setSuccessMessage('');
-        
+
         try {
             const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
             const response = await fetch(`${backendUrl}/reset-password`, {
@@ -57,11 +57,11 @@ const ResetPassword = () => {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ new_password:password })
+                body: JSON.stringify({ new_password: password })
             });
-            
+
             const data = await response.json();
-            
+
             if (response.ok) {
                 setSuccessMessage(data.message || '¡Contraseña actualizada con éxito!');
                 // Redirigir al login después de unos segundos
@@ -131,10 +131,10 @@ const ResetPassword = () => {
                             {/* Logo */}
                             <div className="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
                                 style={{ width: '120px', height: '120px', backgroundColor: '#1E3A8A', position: 'relative' }}>
-                                <img 
-                                    src="https://i.ibb.co/b5sLkxLM/sheep-color-icon.png" 
-                                    alt="Dormiré Logo" 
-                                    style={{ width: '80%', height: '80%' }} 
+                                <img
+                                    src="https://i.imgur.com/RIrjVgm.png"
+                                    alt="Dormiré Logo"
+                                    style={{ width: '80%', height: '80%' }}
                                 />
 
                                 {/* Estrellas alrededor del logo */}
@@ -155,14 +155,14 @@ const ResetPassword = () => {
                             // Mostrar error si el token no es válido
                             <div className="bg-dark bg-opacity-25 rounded-4 p-4 p-md-5 shadow-lg text-center">
                                 <div className="d-flex justify-content-center mb-4">
-                                    <div className="rounded-circle bg-danger d-flex align-items-center justify-content-center" 
+                                    <div className="rounded-circle bg-danger d-flex align-items-center justify-content-center"
                                         style={{ width: '80px', height: '80px' }}>
                                         <XCircle size={50} className="text-white" />
                                     </div>
                                 </div>
                                 <h3 className="text-white mb-3">Error de validación</h3>
                                 <p className="text-white-50 mb-4">{errorMessage}</p>
-                                <button 
+                                <button
                                     onClick={() => navigate('/forgot-password')}
                                     className="btn py-3 px-5"
                                     style={{
@@ -184,7 +184,7 @@ const ResetPassword = () => {
                                     // Mensaje de éxito
                                     <div className="text-center">
                                         <div className="d-flex justify-content-center mb-4">
-                                            <div className="rounded-circle bg-success d-flex align-items-center justify-content-center" 
+                                            <div className="rounded-circle bg-success d-flex align-items-center justify-content-center"
                                                 style={{ width: '80px', height: '80px' }}>
                                                 <CheckCircle size={50} className="text-white" />
                                             </div>
