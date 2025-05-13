@@ -16,7 +16,7 @@ def initialize_database():
     return jsonify({"status": "completed", "results": results})
 
 @init_db_bp.route("/init-admin", methods=["GET"])
-def initialize_database():
+def initialize_admin():
     secret = request.args.get("secret")
     # Cambia este valor para mayor seguridad
     if secret != os.getenv("DB_SEED_PASSWORD"):
