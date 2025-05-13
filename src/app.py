@@ -372,8 +372,8 @@ def handle_forgot_password():
             additional_claims={"user_id": user.id},
             expires_delta=timedelta(minutes=30)
         )
-        reset_url = f"{os.getenv('FRONTEND_URL')}/reset-password?token={token}"
-        html_body = render_template("email_reset_template.html", reset_url=reset_url)
+        url_reset = f"{os.getenv('FRONTEND_URL')}/reset-password?token={token}"
+        html_body = render_template("email_reset_template.html", reset_url=url_reset)
         
         send_email(user.email, "Restablecer contraseña", html_body, is_html=True)
         return jsonify({"msg": "Correo de restablecimiento enviado"}), 200
