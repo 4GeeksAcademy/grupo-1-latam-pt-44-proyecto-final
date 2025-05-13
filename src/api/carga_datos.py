@@ -30,22 +30,23 @@ def run_seed():
         print(f"[POST] {tipo}: {identificador}")
         result = post_api_request(endpoint, payload)
         results.append({"type": tipo, "data": identificador, "result": result})
-        time.sleep(4)  # Esperar 4 SEGUNDOS antes de la siguiente petición
+        print(result)
+        # time.sleep(4)  # Esperar 4 SEGUNDOS antes de la siguiente petición
 
     # USERS
     users = [
-        # {"username": "annya", "nombre": "Any", "apellido": "Mendez", "email": "any@mendez.com",
-        #     "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
-        # {"username": "leo", "nombre": "Leonardo", "apellido": "Rospigliosi",
-        #     "email": "leo@rospligosi.com", "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
-        # {"username": "pedro", "nombre": "Pedro", "apellido": "Aguilar", "email": "pedro@aguilar.com",
-        #     "password": os.getenv("SECURE_USER_PASSWORD"), "is_active": True},
+        {"username": "annya", "nombre": "Any", "apellido": "Mendez", "email": "anymen331@gmail.com",
+            "password": "123456", "is_active": False},
+        {"username": "leo", "nombre": "Leonardo", "apellido": "Rospigliosi",
+            "email": "leo@rospligosi.com", "password": "123456", "is_active": True},
+        {"username": "pedro", "nombre": "Pedro", "apellido": "Aguilar", "email": "pedro@aguilar.com",
+            "password": "123456", "is_active": True},
         {"username": "admin", "nombre": "admin", "apellido": "admin", "email": "admin@example.com",
-            "password": os.getenv("SECURE_ADMIN_PASSWORD"), "is_active": True, "rol": os.getenv("USER_ROLE")}
+            "password": "admin123", "is_active": True, "rol": "ADMIN"}
     ]
 
-    # for u in users:
-    #     safe_post("/register", u, "user", u["username"])
+    for u in users:
+        safe_post("/register", u, "user", u["username"])
 
     # CATEGORIES
     categories = [
@@ -67,8 +68,8 @@ def run_seed():
         }
     ]
 
-    # for c in categories:
-    #     safe_post("/api/categorias", c, "categoria", c["nombre"])
+    for c in categories:
+        safe_post("/api/categorias", c, "categoria", c["nombre"])
 
     # HISTORIAS (asume que ya tienes la lista completa)
     historias = [{
@@ -95,78 +96,78 @@ def run_seed():
         "duracion": 5,
         "categoria_id": "1"
     },
-    #     {
-    #     "titulo": "Meditación para aliviar la ansiedad",
-    #     "contenido": "La meditación es una práctica poderosa para aliviar la ansiedad y el estrés. Al centrarte en tu respiración y en el momento presente, puedes calmar tu mente y encontrar un espacio de paz interior. Esta meditación guiada te llevará a un viaje de relajación profunda, ayudándote a soltar las tensiones acumuladas y a cultivar una sensación de bienestar. A medida que te sumerges en la meditación, podrás observar tus pensamientos sin juzgarlos, permitiendo que fluyan y se disuelvan. Con cada respiración, sentirás cómo la ansiedad se desvanece, dejando espacio para la calma y la serenidad.",
-    #     "imagen": "meditación_ansiedad_1_zgewhu",
-    #     "url": "nAR2PUPyH1I?si=UkbDQrcsi1Rx0QSB",
-    #     "duracion": 5,
-    #     "categoria_id": "2"
-    # },
-    #     {
-    #     "titulo": "Meditación para dormir bien",
-    #     "contenido": "La meditación para dormir bien es una práctica que te ayuda a liberar el estrés y la tensión acumulada durante el día. A través de técnicas de respiración y visualización, podrás relajar tu cuerpo y tu mente, preparándote para un sueño reparador. Esta meditación te guiará a un estado de calma profunda, donde podrás dejar atrás las preocupaciones y encontrar la paz interior. Con cada exhalación, sentirás cómo tu cuerpo se relaja más y más, permitiéndote sumergirte en un sueño profundo y reparador.",
-    #     "imagen": "meditación_rápida_2_wpph7m",
-    #     "url": "kdK3RQj7wN4?si=zhzM4cc4dt8aMjPW",
-    #     "duracion": 5,
-    #     "categoria_id": "2"
-    # },
-    #     {
-    #     "titulo": "Meditación rapida y profunda",
-    #     "contenido": "La meditación rápida y profunda es una técnica que te permite alcanzar un estado de relajación en poco tiempo. Ideal para aquellos que tienen agendas ocupadas, esta meditación te guiará a través de ejercicios de respiración y visualización que te ayudarán a liberar el estrés y la tensión acumulada. En solo unos minutos, podrás sentir cómo tu mente se calma y tu cuerpo se relaja, permitiéndote recargar energías y encontrar la paz interior.",
-    #     "imagen": "meditación_bien_3_drv5ay",
-    #     "url": "3gwLDWU0Zio?si=dYGMvBsXJ2XASMWy",
-    #     "duracion": 5,
-    #     "categoria_id": "2"
-    # },
-    #     {
-    #     "titulo": "El condor pasa",
-    #     "contenido": "Canción musical relajante de la banda peruana Los Incas, que se ha convertido en un himno de la música andina. La melodía es suave y envolvente, evocando paisajes montañosos y la majestuosidad del cóndor que vuela alto en los Andes. La canción invita a la meditación y a la reflexión, transportando al oyente a un estado de paz y tranquilidad. Su ritmo pausado y sus suaves acordes hacen que sea perfecta para relajarse después de un largo día.",
-    #     "imagen": "musica_relajante_el_condor_1_x1qsv4",
-    #     "url": "8kQZHYbZkLs?si=j4b0WMi8SXPG5MDu",
-    #     "duracion": 5,
-    #     "categoria_id": "3"
-    # },
-    #     {
-    #     "titulo": "Canciones de Vivaldi para dormir",
-    #     "contenido": "Las obras de Antonio Vivaldi, especialmente sus conciertos para violín, son conocidas por su belleza y elegancia. Su música es perfecta para crear un ambiente relajante y propicio para el descanso. Las suaves melodías de Vivaldi invitan a la meditación y a la tranquilidad, ayudando a calmar la mente y el cuerpo. Escuchar sus composiciones antes de dormir puede ser una experiencia mágica que transporta al oyente a un mundo de paz y serenidad.",
-    #     "imagen": "musica_relajante_vivaldi_2_avyyfz",
-    #     "url": "D8Xu2A9c_JM?si=p019muiwpC357cWf",
-    #     "duracion": 5,
-    #     "categoria_id": "3"
-    # },
-    #     {
-    #     "titulo": "One Pience Chill Music",
-    #     "contenido": "La música de One Piece es conocida por su energía y emoción, pero también tiene momentos de calma y serenidad. Las melodías suaves y relajantes de la banda sonora de One Piece son perfectas para crear un ambiente tranquilo y propicio para el descanso. Escuchar estas composiciones puede ayudar a liberar tensiones y a encontrar la paz interior, transportando al oyente a un mundo de aventuras y sueños.",
-    #     "imagen": "musica_relajante_one_piece_3_bka7ds",
-    #     "url": "_wcScyiAt9Q?si=6FUQhAFeNuKVaMoK",
-    #     "duracion": 5,
-    #     "categoria_id": "3"
-    # },
-    #     {
-    #     "titulo": "Sonidos del bosque",
-    #     "contenido": "Los sonidos del bosque son una sinfonía natural que invita a la relajación y la meditación. El canto de los pájaros, el susurro del viento entre los árboles y el murmullo de un arroyo crean un ambiente sereno y pacífico. Escuchar estos sonidos puede ayudar a liberar el estrés y la ansiedad, permitiendo que la mente se calme y el cuerpo se relaje. Sumergirse en la naturaleza a través de estos sonidos es una forma efectiva de encontrar la paz interior y reconectar con uno mismo.",
-    #     "imagen": "sonidos__de__la__naturaleza_1_wtzc7t",
-    #     "url": "oN8xzGZ27_0?si=l8iIOYIco0MrPn6H",
-    #     "duracion": 5,
-    #     "categoria_id": "4"
-    # },
-    #     {
-    #     "titulo": "Sonidos de la lluvia",
-    #     "contenido": "Los sonidos de la lluvia son una melodía natural que invita a la calma y la reflexión. El suave golpeteo de las gotas sobre el suelo y los techos crea un ambiente acogedor y relajante. Escuchar la lluvia puede ayudar a liberar tensiones y a encontrar un espacio de paz interior. Es una experiencia que transporta al oyente a momentos de tranquilidad y serenidad, permitiendo que la mente se apacigüe y el cuerpo se relaje.",
-    #     "imagen": "sonidos_de_la_naturaleza_lluvia_2_mtzvjl",
-    #     "url": "t8_Dquklg4Y?si=cgVDDMCwOrwJ_mrH",
-    #     "duracion": 5,
-    #     "categoria_id": "4"
-    # },
-    #     {
-    #     "titulo": "Sonidos de naturaleza",
-    #     "contenido": "Los sonidos de la naturaleza son una sinfonía de paz y serenidad. El canto de los pájaros, el murmullo de un arroyo y el susurro del viento entre los árboles crean un ambiente relajante y acogedor. Escuchar estos sonidos puede ayudar a liberar el estrés y la ansiedad, permitiendo que la mente se calme y el cuerpo se relaje. Sumergirse en la naturaleza a través de estos sonidos es una forma efectiva de encontrar la paz interior y reconectar con uno mismo.",
-    #     "imagen": "sonidos_de_la_naturaleza_3_aepi9o",
-    #     "url": "sZhUVP4R07M?si=eZk4iCyefIBoOYJ9",
-    #     "duracion": 5,
-    #     "categoria_id": "4"
-    # }
+        {
+        "titulo": "Meditación para aliviar la ansiedad",
+        "contenido": "La meditación es una práctica poderosa para aliviar la ansiedad y el estrés. Al centrarte en tu respiración y en el momento presente, puedes calmar tu mente y encontrar un espacio de paz interior. Esta meditación guiada te llevará a un viaje de relajación profunda, ayudándote a soltar las tensiones acumuladas y a cultivar una sensación de bienestar. A medida que te sumerges en la meditación, podrás observar tus pensamientos sin juzgarlos, permitiendo que fluyan y se disuelvan. Con cada respiración, sentirás cómo la ansiedad se desvanece, dejando espacio para la calma y la serenidad.",
+        "imagen": "meditación_ansiedad_1_zgewhu",
+        "url": "nAR2PUPyH1I?si=UkbDQrcsi1Rx0QSB",
+        "duracion": 5,
+        "categoria_id": "2"
+    },
+        {
+        "titulo": "Meditación para dormir bien",
+        "contenido": "La meditación para dormir bien es una práctica que te ayuda a liberar el estrés y la tensión acumulada durante el día. A través de técnicas de respiración y visualización, podrás relajar tu cuerpo y tu mente, preparándote para un sueño reparador. Esta meditación te guiará a un estado de calma profunda, donde podrás dejar atrás las preocupaciones y encontrar la paz interior. Con cada exhalación, sentirás cómo tu cuerpo se relaja más y más, permitiéndote sumergirte en un sueño profundo y reparador.",
+        "imagen": "meditación_rápida_2_wpph7m",
+        "url": "kdK3RQj7wN4?si=zhzM4cc4dt8aMjPW",
+        "duracion": 5,
+        "categoria_id": "2"
+    },
+        {
+        "titulo": "Meditación rapida y profunda",
+        "contenido": "La meditación rápida y profunda es una técnica que te permite alcanzar un estado de relajación en poco tiempo. Ideal para aquellos que tienen agendas ocupadas, esta meditación te guiará a través de ejercicios de respiración y visualización que te ayudarán a liberar el estrés y la tensión acumulada. En solo unos minutos, podrás sentir cómo tu mente se calma y tu cuerpo se relaja, permitiéndote recargar energías y encontrar la paz interior.",
+        "imagen": "meditación_bien_3_drv5ay",
+        "url": "3gwLDWU0Zio?si=dYGMvBsXJ2XASMWy",
+        "duracion": 5,
+        "categoria_id": "2"
+    },
+        {
+        "titulo": "El condor pasa",
+        "contenido": "Canción musical relajante de la banda peruana Los Incas, que se ha convertido en un himno de la música andina. La melodía es suave y envolvente, evocando paisajes montañosos y la majestuosidad del cóndor que vuela alto en los Andes. La canción invita a la meditación y a la reflexión, transportando al oyente a un estado de paz y tranquilidad. Su ritmo pausado y sus suaves acordes hacen que sea perfecta para relajarse después de un largo día.",
+        "imagen": "musica_relajante_el_condor_1_x1qsv4",
+        "url": "8kQZHYbZkLs?si=j4b0WMi8SXPG5MDu",
+        "duracion": 5,
+        "categoria_id": "3"
+    },
+        {
+        "titulo": "Canciones de Vivaldi para dormir",
+        "contenido": "Las obras de Antonio Vivaldi, especialmente sus conciertos para violín, son conocidas por su belleza y elegancia. Su música es perfecta para crear un ambiente relajante y propicio para el descanso. Las suaves melodías de Vivaldi invitan a la meditación y a la tranquilidad, ayudando a calmar la mente y el cuerpo. Escuchar sus composiciones antes de dormir puede ser una experiencia mágica que transporta al oyente a un mundo de paz y serenidad.",
+        "imagen": "musica_relajante_vivaldi_2_avyyfz",
+        "url": "D8Xu2A9c_JM?si=p019muiwpC357cWf",
+        "duracion": 5,
+        "categoria_id": "3"
+    },
+        {
+        "titulo": "One Pience Chill Music",
+        "contenido": "La música de One Piece es conocida por su energía y emoción, pero también tiene momentos de calma y serenidad. Las melodías suaves y relajantes de la banda sonora de One Piece son perfectas para crear un ambiente tranquilo y propicio para el descanso. Escuchar estas composiciones puede ayudar a liberar tensiones y a encontrar la paz interior, transportando al oyente a un mundo de aventuras y sueños.",
+        "imagen": "musica_relajante_one_piece_3_bka7ds",
+        "url": "_wcScyiAt9Q?si=6FUQhAFeNuKVaMoK",
+        "duracion": 5,
+        "categoria_id": "3"
+    },
+        {
+        "titulo": "Sonidos del bosque",
+        "contenido": "Los sonidos del bosque son una sinfonía natural que invita a la relajación y la meditación. El canto de los pájaros, el susurro del viento entre los árboles y el murmullo de un arroyo crean un ambiente sereno y pacífico. Escuchar estos sonidos puede ayudar a liberar el estrés y la ansiedad, permitiendo que la mente se calme y el cuerpo se relaje. Sumergirse en la naturaleza a través de estos sonidos es una forma efectiva de encontrar la paz interior y reconectar con uno mismo.",
+        "imagen": "sonidos__de__la__naturaleza_1_wtzc7t",
+        "url": "oN8xzGZ27_0?si=l8iIOYIco0MrPn6H",
+        "duracion": 5,
+        "categoria_id": "4"
+    },
+        {
+        "titulo": "Sonidos de la lluvia",
+        "contenido": "Los sonidos de la lluvia son una melodía natural que invita a la calma y la reflexión. El suave golpeteo de las gotas sobre el suelo y los techos crea un ambiente acogedor y relajante. Escuchar la lluvia puede ayudar a liberar tensiones y a encontrar un espacio de paz interior. Es una experiencia que transporta al oyente a momentos de tranquilidad y serenidad, permitiendo que la mente se apacigüe y el cuerpo se relaje.",
+        "imagen": "sonidos_de_la_naturaleza_lluvia_2_mtzvjl",
+        "url": "t8_Dquklg4Y?si=cgVDDMCwOrwJ_mrH",
+        "duracion": 5,
+        "categoria_id": "4"
+    },
+        {
+        "titulo": "Sonidos de naturaleza",
+        "contenido": "Los sonidos de la naturaleza son una sinfonía de paz y serenidad. El canto de los pájaros, el murmullo de un arroyo y el susurro del viento entre los árboles crean un ambiente relajante y acogedor. Escuchar estos sonidos puede ayudar a liberar el estrés y la ansiedad, permitiendo que la mente se calme y el cuerpo se relaje. Sumergirse en la naturaleza a través de estos sonidos es una forma efectiva de encontrar la paz interior y reconectar con uno mismo.",
+        "imagen": "sonidos_de_la_naturaleza_3_aepi9o",
+        "url": "sZhUVP4R07M?si=eZk4iCyefIBoOYJ9",
+        "duracion": 5,
+        "categoria_id": "4"
+    }
     ]  # Usa la misma lista larga que ya escribiste
 
     for h in historias:
@@ -174,3 +175,6 @@ def run_seed():
 
     print("\n✅ Seed finalizado.")
     return results
+
+if __name__ == "__main__":
+    run_seed()

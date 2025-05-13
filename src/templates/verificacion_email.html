@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifica tu cuenta de Dormiré</title>
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Calibri', 'Helvetica', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333333;
+            line-height: 1.6;
+        }
+        
+        /* Contenedor principal */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Encabezado */
+        .header {
+            background: linear-gradient(180deg, #026EEC 0%, #051B47 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        
+        .header h1 {
+            color: #ffffff;
+            margin: 0;
+            font-size: 24px;
+            font-weight: normal;
+        }
+        
+        /* Contenido */
+        .content {
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .content h2 {
+            color: #051B47;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .content p {
+            margin-bottom: 20px;
+            color: #555555;
+            font-size: 16px;
+        }
+        
+        /* Botón */
+        .button {
+            display: inline-block;
+            background-color: #026EEC;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+        
+        .button:hover {
+            background-color: #0258B8;
+        }
+        
+        /* Código de verificación */
+        .verification-code {
+            background-color: #f0f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+            color: #051B47;
+        }
+        
+        /* Información adicional */
+        .info {
+            background-color: #f9f9f9;
+            padding: 15px 20px;
+            border-top: 1px solid #eeeeee;
+            font-size: 14px;
+            color: #777777;
+        }
+        
+        /* Pie de página */
+        .footer {
+            background-color: #051B47;
+            padding: 20px;
+            text-align: center;
+            color: #ffffff;
+            font-size: 12px;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+        }
+        
+        .social-links {
+            margin: 15px 0;
+        }
+        
+        .social-links a {
+            color: #ffffff;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        
+        /* Estrellas decorativas */
+        .star {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            margin: 0 5px;
+        }
+        
+        /* Responsividad */
+        @media only screen and (max-width: 480px) {
+            .container {
+                width: 100%;
+                border-radius: 0;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .button {
+                display: block;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://i.ibb.co/b5sLkxLM/sheep-color-icon.png" alt="Dormiré" class="logo">
+            <h1>Dormiré</h1>
+        </div>
+        
+        <div class="content">
+            <h2>¡Hola {{ user_name }}!</h2>
+            <p>Gracias por registrarte en Dormiré. Para completar tu registro y comenzar a disfrutar de nuestro contenido para dormir mejor, por favor verifica tu dirección de correo electrónico.</p>
+            
+            <a href="{{ verification_url }}" class="button">Verificar mi cuenta</a>
+            
+            <p>Si el botón no funciona, puedes copiar y pegar el siguiente enlace en tu navegador:</p>
+            <p style="word-break: break-all; font-size: 14px; color: #777777;">
+                {{ verification_url }}
+            </p>
+            
+            <p>Este enlace y código expirarán en 24 horas.</p>
+        </div>
+        
+        <div class="info">
+            <p>Si no solicitaste esta verificación, puedes ignorar este correo electrónico o contactarnos si tienes alguna pregunta.</p>
+        </div>
+        
+        <div class="footer">
+            <p>© {{ current_year }} Dormiré. Todos los derechos reservados.</p>
+            <div class="social-links">
+                <a href="#">Facebook</a> | 
+                <a href="#">Instagram</a> | 
+                <a href="#">Twitter</a>
+            </div>
+            <p>Dormiré - Tu compañero para un mejor descanso</p>
+        </div>
+    </div>
+</body>
+</html>

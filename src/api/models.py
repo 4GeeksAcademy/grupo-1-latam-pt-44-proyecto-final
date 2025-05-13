@@ -21,7 +21,7 @@ class User(db.Model):
     nombre: Mapped[str] = mapped_column(String(120), nullable=False)
     apellido: Mapped[str] = mapped_column(String(120), nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False, default=False)
     role: Mapped[UserRole] = mapped_column(Enum(
         UserRole, name="user_role_enum", native_enum=False), nullable=False, default=UserRole.USER)
 
