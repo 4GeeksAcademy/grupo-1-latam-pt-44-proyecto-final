@@ -20,6 +20,9 @@ import { Categoria } from "./pages/Categoria";
 import { HistoriaPlayer } from "./pages/HistoriaPlayer.jsx";
 import { Profile } from "./pages/Profile.jsx";
 import { NotFound } from "./pages/NotFound.jsx";
+import { VerifyEmail } from "./pages/VerifyEmail.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 
 
 export const router = createBrowserRouter(
@@ -46,6 +49,9 @@ export const router = createBrowserRouter(
             <Route path="/demo" element={<Demo />} />
             <Route path="/detailspeople/:contactID" element={<PeopleCardDetail />} />
             <Route path="/administrator" element={<Administrator />} />
+             <Route path="/verify-email" element={<VerifyEmail />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
         </Route>
     )
 );

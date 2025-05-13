@@ -75,26 +75,24 @@ export const Register = () => {
                 backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
                 backgroundSize: '50px 50px',
                 width: '100%',
-                height: 'auto',
-                minHeight: '100%',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                paddingBottom: '30px' // Asegura espacio en la parte inferior
+                minHeight: '100vh', // Cambiado a minHeight: 100vh
+                position: 'relative', // Cambiado de absolute a relative
+                paddingTop: '50px',
+                paddingBottom: '150px' // Aumentado el padding inferior para dejar espacio al footer
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
         >
             {/* Elementos decorativos */}
-            <div className="position-absolute" style={{ top: '10%', left: '10%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
-            <div className="position-absolute" style={{ top: '15%', right: '15%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
-            <div className="position-absolute" style={{ bottom: '30%', left: '20%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
-            <div className="position-absolute" style={{ bottom: '20%', right: '10%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
-            <div className="position-absolute" style={{ bottom: '5%', right: '25%', color: 'rgba(255,255,255,0.3)', fontSize: '24px' }}>✦</div>
+            <div className="position-absolute" style={{ top: '10%', left: '10%', color: 'rgba(255,255,255,0.3)', fontSize: '24px', zIndex: 1 }}>✦</div>
+            <div className="position-absolute" style={{ top: '15%', right: '15%', color: 'rgba(255,255,255,0.3)', fontSize: '24px', zIndex: 1 }}>✦</div>
+            <div className="position-absolute" style={{ bottom: '30%', left: '20%', color: 'rgba(255,255,255,0.3)', fontSize: '24px', zIndex: 1 }}>✦</div>
+            <div className="position-absolute" style={{ bottom: '20%', right: '10%', color: 'rgba(255,255,255,0.3)', fontSize: '24px', zIndex: 1 }}>✦</div>
+            <div className="position-absolute" style={{ bottom: '5%', right: '25%', color: 'rgba(255,255,255,0.3)', fontSize: '24px', zIndex: 1 }}>✦</div>
 
             {/* Puntos decorativos */}
-            <div className="position-absolute" style={{ top: '30%', left: '25%' }}>
+            <div className="position-absolute" style={{ top: '30%', left: '25%', zIndex: 1 }}>
                 <div className="d-flex">
                     <div className="rounded-circle mx-1" style={{ width: '6px', height: '6px', backgroundColor: '#4ADE80' }}></div>
                     <div className="rounded-circle mx-1" style={{ width: '6px', height: '6px', backgroundColor: '#4ADE80' }}></div>
@@ -102,7 +100,7 @@ export const Register = () => {
                 </div>
             </div>
 
-            <div className="container py-5 mt-5">
+            <div className="container py-5">
                 <div className="row justify-content-center">
                     <div className="col-12 col-md-10 col-lg-8">
                         <div className="text-center mb-4">
@@ -314,7 +312,7 @@ export const Register = () => {
                             </form>
                         </div>
 
-                        {/* Footer */}
+                        {/* Footer interno del componente */}
                         <div className="text-center mt-4 mb-5">
                             <div className="d-flex justify-content-center gap-3">
                                 <a href="#" className="text-white-50 text-decoration-none" style={{ fontSize: '0.8rem' }}>

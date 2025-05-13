@@ -2,10 +2,11 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for, send_from_directory
+import traceback
+from flask import Flask, request, jsonify, url_for, send_from_directory, render_template
 from flask_migrate import Migrate
 from flask_swagger import swagger
-from api.utils import APIException, generate_sitemap
+from api.utils import APIException, generate_sitemap, send_email
 from api.models import db, User, UserRole
 from api.routes import api
 from api.init_db import init_db_bp
@@ -17,7 +18,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt, get_jwt_identity
 from flask_cors import CORS
 from sqlalchemy import select
-from datetime import timedelta
+from datetime import timedelta, date
 
 # from models import Person
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -59,6 +60,28 @@ app.register_blueprint(init_db_bp, url_prefix='/api')
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
+
+def generate_verification_token(user_id):
+    additional_claims = {"user_id": user_id}
+
+    token = create_access_token(
+        identity=str(user_id),
+        additional_claims=additional_claims,
+        expires_delta=timedelta(hours=24)
+    )
+    return token
+
+
+def send_verification_email(user_email, user_id, user_name):
+    token = generate_verification_token(user_id)
+    verification_url = f"{os.getenv("FRONTEND_URL")}/verify-email?token={token}"
+    current_date= date.today()
+    current_year=current_date.year
+    html_body = render_template(
+        "verificacion_email.html", verification_url=verification_url, user_name=user_name, current_year=current_year)
+
+    return send_email(user_email, "Verifica tu correo electrónico",
+               html_body, is_html=True)
 # generate sitemap with all your endpoints
 
 
@@ -99,6 +122,9 @@ def get_logintoken():
         # Validar que exista usuario en BD y su contraseña
         if not user:
             return jsonify({"ok": False, "msg": "Usuario no existe o sus credenciales son incorrectas"}), 401
+        
+        if not user.is_active:
+            return jsonify({"msg": "Debe verificar su correo electrónico"}), 403
 
         if not bcrypt.check_password_hash(user.password, dataFront.get("password")):
             return jsonify({"ok": False, "msg": "Usuario no existe o su contraseña es incorrecta"}), 401
@@ -160,7 +186,8 @@ def register():
                         apellido=apellido, email=email, password=hashed_password, role=rol, is_active=is_active)
         db.session.add(new_user)
         db.session.commit()
-        return jsonify({'message': 'Usuario registrado exitosamente.'}), 201
+        email_sent=send_verification_email(new_user.email, new_user.id, new_user.nombre)
+        return jsonify({'message': 'Usuario registrado exitosamente.', "email_sent":email_sent}), 201
     except Exception as e:
         print(f"Error al registrar usuario: {e}")
         db.session.rollback()
@@ -314,6 +341,72 @@ def update_user_profile(usuario_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Error al actualizar el perfil", "error": str(e)}), 500
+    
+@app.route("/verify-email", methods=['POST'])
+@jwt_required()
+def handle_verify_email():
+    try:
+        # Obtener el user_id desde los claims adicionales
+        claims = get_jwt()  # Devuelve el payload completo (incluyendo los claims adicionales)
+        user_id = claims['user_id']
+        # Buscamos el usuario para actualizarlo en la bd
+        user = db.session.scalar(db.select(User).where(User.id == user_id))
+        user.is_active = True
+        db.session.commit()
+        return jsonify({"message": "Correo verificado correctamente"}), 200
+    except Exception as e:
+        return jsonify({"message": "Ocurrió un error al validar la cuenta"}), 500
+    
+@app.route("/forgot-password", methods=['POST'])
+def handle_forgot_password():
+    try:
+        data = request.get_json()
+        email = data.get("email")
+        
+        user = db.session.scalar(db.select(User).where(User.email == email))
+        if not user:
+            return jsonify({"msg": "No se encontró un usuario con ese correo"}), 404
+
+        token = create_access_token(
+            identity=str(user.id),
+            additional_claims={"user_id": user.id},
+            expires_delta=timedelta(minutes=30)
+        )
+        reset_url = f"{os.getenv('FRONTEND_URL')}/reset-password?token={token}"
+        html_body = render_template("email_reset_template.html", reset_url=reset_url)
+        
+        send_email(user.email, "Restablecer contraseña", html_body, is_html=True)
+        return jsonify({"msg": "Correo de restablecimiento enviado"}), 200
+
+    except Exception as e:
+        print("Error en /forgot-password:", str(e))
+        traceback.print_exc()
+        return jsonify({"msg": "Ocurrió un error al intentar enviar el correo de restablecimiento"}), 500
+
+@app.route("/reset-password", methods=["POST"])
+@jwt_required()
+def handle_reset_password():
+    try:
+        claims = get_jwt()
+        user_id = claims['user_id']
+        data = request.get_json()
+        new_password = data.get("new_password")
+
+        if not new_password:
+            return jsonify({"msg": "Contraseña nueva requerida"}), 400
+
+        user = db.session.scalar(db.select(User).where(User.id == user_id))
+        if not user:
+            return jsonify({"msg": "Usuario no encontrado"}), 404
+
+        user.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        db.session.commit()
+        return jsonify({"msg": "Contraseña actualizada correctamente"}), 200
+
+    except Exception as e:
+        print("Error en /reset-password:", str(e))
+        traceback.print_exc()
+        return jsonify({"msg": "Error al actualizar contraseña"}), 500
 
 
 # this only runs if `$ python src/main.py` is executed
