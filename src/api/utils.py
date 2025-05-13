@@ -1,4 +1,9 @@
 from flask import jsonify, url_for
+import smtplib
+import traceback
+from email.message import EmailMessage
+import os
+
 
 class APIException(Exception):
     status_code = 400
@@ -39,3 +44,37 @@ def generate_sitemap(app):
         <p>Start working on your project by following the <a href="https://start.4geeksacademy.com/starters/full-stack" target="_blank">Quick Start</a></p>
         <p>Remember to specify a real endpoint path like: </p>
         <ul style="text-align: left;">"""+links_html+"</ul></div>"
+
+def send_email(to_email, subject, body, is_html=False):
+    try:
+        smtp_server = os.getenv("MAIL_SERVER")
+        smtp_port = int(os.getenv("MAIL_PORT", 587))
+        smtp_user = os.getenv("MAIL_USERNAME")
+        smtp_pass = os.getenv("MAIL_PASSWORD")
+
+        if not smtp_server or not smtp_user or not smtp_pass:
+            raise ValueError("Faltan variables de entorno para configurar el correo")
+
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = smtp_user
+        msg["To"] = to_email
+        # msg["Bcc"] = smtp_user  # Copia oculta al remitente
+
+        if is_html:
+            msg.set_content("Tu cliente de correo no soporta HTML.")
+            msg.add_alternative(body, subtype="html")
+        else:
+            msg.set_content(body)
+
+        with smtplib.SMTP(smtp_server, smtp_port) as smtp:
+            smtp.starttls()
+            smtp.login(smtp_user, smtp_pass)
+            smtp.send_message(msg)
+
+        return True  # Envío exitoso
+
+    except Exception as e:
+        print("❌ Error al enviar correo:")
+        traceback.print_exc()
+        return False
